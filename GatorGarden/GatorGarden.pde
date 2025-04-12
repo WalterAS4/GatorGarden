@@ -29,12 +29,37 @@ char prevKey = ' ';
 
 int timer = 0;
 
+// PImage initializations
+PImage gatorWalk1, gatorWalk2, gatorWalk3, gatorWalk4;
+PImage foxWalk1, foxWalk2, foxWalk3, foxWalk4;
+PImage dirt;
+PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
+
 void setup() {
     size(800,800);
     width = 800;
     height = 800;
     rectMode(CENTER);
     ellipseMode(CENTER);
+    imageMode(CENTER);
+
+    // Image loading
+    gatorWalk1 = loadImage("ImageFiles/Gator1.png");
+    gatorWalk2 = loadImage("ImageFiles/Gator2.png");
+    gatorWalk3 = loadImage("ImageFiles/Gator3.png");
+    gatorWalk4 = loadImage("ImageFiles/Gator4.png");
+    foxWalk1 = loadImage("ImageFiles/Fox1.png");
+    foxWalk2 = loadImage("ImageFiles/Fox2.png");
+    foxWalk3 = loadImage("ImageFiles/Fox3.png");
+    foxWalk4 = loadImage("ImageFiles/Fox4.png");
+    // TODO: more mobs
+    dirt = loadImage("ImageFiles/Dirt.png");
+    wheat1 = loadImage("ImageFiles/Wheat1.png");
+    wheat2 = loadImage("ImageFiles/Wheat2.png");
+    wheat3 = loadImage("ImageFiles/Wheat3.png");
+    wheat4 = loadImage("ImageFiles/Wheat4.png");
+    wheat5 = loadImage("ImageFiles/Wheat5.png");
+    wheat6 = loadImage("ImageFiles/Wheat6.png");
 }
 
 void draw() {
@@ -178,26 +203,53 @@ void keyPressed() {
 
 // Draws wheat based on its age
 void drawWheat(int x, int y, int age) {
-    // TODO: Use images to draw the flower
-    if (age < 100) {
-        fill(53, 135, 41);
-        ellipse(x, y, 20, 20);
+    if (age < 20) {
+        image(wheat1, x-15, y-15, 64, 64);
+        image(wheat1, x-15, y+15, 64, 64);
+        image(wheat1, x+15, y+15, 64, 64);
+        image(wheat1, x+15, y-15, 64, 64);
+    }
+    else if (age < 40) {
+        image(wheat2, x-15, y-15, 64, 64);
+        image(wheat2, x-15, y+15, 64, 64);
+        image(wheat2, x+15, y+15, 64, 64);
+        image(wheat2, x+15, y-15, 64, 64);
+    }
+    else if (age < 60) {
+        image(wheat3, x-15, y-15, 64, 64);
+        image(wheat3, x-15, y+15, 64, 64);
+        image(wheat3, x+15, y+15, 64, 64);
+        image(wheat3, x+15, y-15, 64, 64);
+    }
+    else if (age < 80) {
+        image(wheat4, x-15, y-15, 64, 64);
+        image(wheat4, x-15, y+15, 64, 64);
+        image(wheat4, x+15, y+15, 64, 64);
+        image(wheat4, x+15, y-15, 64, 64);
+    }
+    else if (age < 100) {
+        image(wheat5, x-15, y-15, 64, 64);
+        image(wheat5, x-15, y+15, 64, 64);
+        image(wheat5, x+15, y+15, 64, 64);
+        image(wheat5, x+15, y-15, 64, 64);
     }
     else {
-        fill(222);
-        ellipse(x, y, 40, 40);
+        image(wheat6, x-15, y-15, 64, 64);
+        image(wheat6, x-15, y+15, 64, 64);
+        image(wheat6, x+15, y+15, 64, 64);
+        image(wheat6, x+15, y-15, 64, 64);
     }
 }
 
 // Class used to represent the player's character
 class Farmer {
 
-    // TODO: Implement a 'speed' variable
-
     int xPos, yPos;
     int upgradesAvailable;
     int speed;
     int reach;
+
+    int walkCycle;
 
     // initializes farmer
     Farmer() {
@@ -207,13 +259,39 @@ class Farmer {
         upgradesAvailable = 0;
         speed = 1;
         reach = 1;
+        walkCycle = 1;
     }
 
     // draws the farmer
     // TODO: images will be used for the farmer and movement will be animated
     void drawFarmer() {
         fill(255);
-        rect(xPos, yPos, 16, 16);
+        if (walkCycle == 1) {
+            image(gatorWalk1, xPos, yPos-10, 32, 32);
+            if (timer % 20 == 0) {
+                walkCycle = 2;
+            }
+        }
+        else if (walkCycle == 2) {
+            image(gatorWalk2, xPos, yPos-10, 32, 32);
+            if (timer % 20 == 0) {
+                walkCycle = 3;
+            }
+        }
+        else if (walkCycle == 3) {
+            image(gatorWalk3, xPos, yPos-10, 32, 32);
+            if (timer % 20 == 0) {
+                walkCycle = 4;
+            }
+        }
+        else if (walkCycle == 4) {
+            image(gatorWalk4, xPos, yPos-10, 32, 32);
+            if (timer % 20 == 0) {
+                walkCycle = 1;
+            }
+        }
+        
+        // rect(xPos, yPos, 16, 16);
     }
 
     // MOVEMENT FUNCTIONS
@@ -309,6 +387,8 @@ class Mob {
     boolean prefersX;
     boolean isRetreating;
     boolean isGone;
+
+    int walkCycle;
     
 
     Mob(int mob_type) {
@@ -365,6 +445,8 @@ class Mob {
         int r = int(random(2));
         if (r == 0) { prefersX = true; }
         else if (r == 1) { prefersX = false; }
+
+        walkCycle = 1;
 
     }
 
@@ -433,18 +515,45 @@ class Mob {
     }
 
     void drawMob() {
-        fill(60, 105, 66);
-        rect(xPos, yPos, 16, 16);
+        // fill(60, 105, 66);
+        // rect(xPos, yPos, 16, 16);
+
+        if (mob == FOX) {
+            if (walkCycle == 1) {
+                image(foxWalk1, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 2;
+                }
+            }
+            else if (walkCycle == 2) {
+                image(foxWalk2, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 3;
+                }
+            }
+            else if (walkCycle == 3) {
+                image(foxWalk3, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 4;
+                }
+            }
+            else if (walkCycle == 4) {
+                image(foxWalk4, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 1;
+                }
+            }
+        }
 
         // fear meter
         if (currFear > 0) {
             fill(255,255,0);
             noStroke();
             rectMode(CORNERS);
-            rect(xPos-fullFear/4, yPos-10, xPos-fullFear/4+currFear/2, yPos-15);
+            rect(xPos-fullFear/4, yPos-20, xPos-fullFear/4+currFear/2, yPos-25);
             noFill();
             stroke(0);
-            rect(xPos-fullFear/4, yPos-10, xPos+fullFear/4, yPos-15);
+            rect(xPos-fullFear/4, yPos-20, xPos+fullFear/4, yPos-25);
             rectMode(CENTER);
         }
 
@@ -456,10 +565,10 @@ class Mob {
         {
             fill(255,0,0);
             noStroke();
-            arc(xPos, yPos-30, 30, 30, (fullThreat-currThreat)*2*PI/fullThreat-(PI/2), 3*PI/2);
+            arc(xPos, yPos-40, 30, 30, (fullThreat-currThreat)*2*PI/fullThreat-(PI/2), 3*PI/2);
             stroke(0);
             noFill();
-            ellipse(xPos, yPos-30, 30, 30);
+            ellipse(xPos, yPos-40, 30, 30);
         }
     }
 
@@ -657,6 +766,12 @@ class Farm {
                 rect(i*100+150, j*100+250, 80, 80);
                 if (plots[i][j].getPlant() == WHEAT) {
                     drawWheat(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                else {
+                    image(dirt, i*100+150-15, j*100+250-15, 16, 16);
+                    image(dirt, i*100+150-15, j*100+250+15, 16, 16);
+                    image(dirt, i*100+150+15, j*100+250+15, 16, 16);
+                    image(dirt, i*100+150+15, j*100+250-15, 16, 16);
                 }
             }
         }
