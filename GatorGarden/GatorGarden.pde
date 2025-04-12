@@ -43,6 +43,26 @@ void draw() {
     farm.drawFarm();
     farmer.drawFarmer();
 
+    // Button Hover
+    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
+        strokeWeight(2);
+        fill(#b5e0f5);
+        rect(480, 35, 40, 20, 0, 20, 20, 0);
+        fill(0);
+        textSize(15);
+        text("+", 475, 40);
+        strokeWeight(1.5);
+    }
+    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
+        strokeWeight(2);
+        fill(#f5b87a);
+        rect(480, 65, 40, 20, 0, 20, 20, 0);
+        fill(0);
+        textSize(15);
+        text("+", 475, 70);
+        strokeWeight(1.5);
+    }
+
     // custom cursor
     if (mouseY <= 100) {
         cursor(ARROW);
