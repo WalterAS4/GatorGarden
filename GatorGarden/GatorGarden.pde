@@ -43,6 +43,17 @@ void draw() {
     farm.drawFarm();
     farmer.drawFarmer();
 
+    // custom cursor
+    if (mouseY <= 100) {
+        cursor(ARROW);
+    }
+    else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+        cursor(CROSS);
+    }
+    else {
+        cursor(ARROW);
+    }
+
     // mob logic
     if (fox.isGone()) {
         fox.updateCooldown();
@@ -58,20 +69,31 @@ void draw() {
 
 void mousePressed() {
 
-    // Plant/Harvest Crop
-    for (int i = 0; i < farm.getRows(); i++) {
-        for (int j = 0; j < farm.getCols(); j++) {
-            if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290) {
-                if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
-                    farm.plantCrop(i, j, WHEAT);
+    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
+        farmer.speed += 1;
+        farmer.upgradesAvailable -= 1;
+    }
+    else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
+        farmer.reach += 1;
+        farmer.upgradesAvailable -= 1;
+    }
+    else {
+        // Plant/Harvest Crop
+        for (int i = 0; i < farm.getRows(); i++) {
+            for (int j = 0; j < farm.getCols(); j++) {
+                if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+                    if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
+                        farm.plantCrop(i, j, WHEAT);
+                    }
+                    else if (farm.isCropReady(i, j)) {
+                        farm.harvestCrop(i,j);
+                    }
+
                 }
-                else if (farm.isCropReady(i, j)) {
-                    farm.harvestCrop(i,j);
-                }
-                
             }
         }
     }
+
 }
 
 void keyPressed() {
@@ -153,12 +175,18 @@ class Farmer {
     // TODO: Implement a 'speed' variable
 
     int xPos, yPos;
+    int upgradesAvailable;
+    int speed;
+    int reach;
 
     // initializes farmer
     Farmer() {
         // starting location is at the center of the window
         xPos = 400;
         yPos = 400;
+        upgradesAvailable = 0;
+        speed = 1;
+        reach = 1;
     }
 
     // draws the farmer
@@ -171,24 +199,68 @@ class Farmer {
     // MOVEMENT FUNCTIONS
     // TODO: Implement a 'speed' variable
     void moveDown() {
-        if (yPos % 100 >= 92 || yPos % 100 <= 4 || xPos % 100 <= 8 || xPos % 100 >= 92) {
-            yPos = yPos + 4;
+        int nextY = yPos + (speed + 1) * 2;
+        // If inside the plots area
+        if ((xPos >= 110 && xPos <= 690) && (yPos >= 210 && yPos <= 690)) {
+            int relativeX = xPos - 110;
+            int relativeY = nextY - 210;
+            // If nextY would move into a plot, restrict to top edge of nearest plot
+            if ((relativeX % 100) < 80 && (relativeY % 100) < 80  && (relativeX % 100) != 0) {
+                int plotIndex = relativeY / 100;
+                yPos = 210 + plotIndex * 100;
+                return;
+            }
         }
+        // Safe to move
+        yPos = min(800, nextY);
     }
     void moveUp() {
-        if (yPos % 100 >= 96 || yPos % 100 <= 8 || xPos % 100 <= 8 || xPos % 100 >= 92) {
-            yPos = yPos - 4;
+        int nextY = yPos - (speed + 1) * 2;
+        // If inside the plots area
+        if ((xPos >= 110 && xPos <= 690) && (yPos >= 210 && yPos <= 690)) {
+            int relativeX = xPos - 110;
+            int relativeY = nextY - 210;
+            // If nextY would move into a plot, restrict to bottom edge of nearest plot
+            if ((relativeX % 100) < 80 && (relativeY % 100) < 80 && (relativeX % 100) != 0) {
+                int plotIndex = relativeY / 100;
+                yPos = 210 + plotIndex * 100 + 80;
+                return;
+            }
         }
+        // Safe to move
+        yPos = max(100, nextY);
     }
     void moveLeft() {
-        if (xPos % 100 >= 96 || xPos % 100 <= 8 || yPos % 100 <= 8 || yPos % 100 >= 92) {
-            xPos = xPos - 4;
+        int nextX = xPos - (speed + 1) * 2;
+        // If inside the plots area
+        if ((xPos >= 110 && xPos <= 690) && (yPos >= 210 && yPos <= 690)) {
+            int relativeX = nextX - 110;
+            int relativeY = yPos - 210;
+            // If nextX would move into a plot, restrict to right edge of nearest plot
+            if ((relativeX % 100) < 80 && (relativeY % 100) < 80 && (relativeY % 100) != 0) {
+                int plotIndex = relativeX / 100;
+                xPos = 110 + plotIndex * 100 + 80;
+                return;
+            }
         }
+        // Safe to move
+        xPos = max(0, nextX);
     }
     void moveRight() {
-        if (xPos % 100 >= 92 || xPos % 100 <= 4 || yPos % 100 <= 8 || yPos % 100 >= 92) {
-            xPos = xPos + 4;
+        int nextX = xPos + (speed + 1) * 2;
+        // If inside the plots area
+        if ((xPos >= 110 && xPos <= 690) && (yPos >= 210 && yPos <= 690)) {
+            int relativeX = nextX - 110;
+            int relativeY = yPos - 210;
+            // If nextX would move into a plot, restrict to right edge of nearest plot
+            if ((relativeX % 100) < 80 && (relativeY % 100) < 80 && (relativeY % 100) != 0) {
+                int plotIndex = relativeX / 100;
+                xPos = 110 + plotIndex * 100;
+                return;
+            }
         }
+        // Safe to move
+        xPos = min(800, nextX);
     }
 
     // FOR DEBUGGING
@@ -445,7 +517,7 @@ class Mob {
         }
 
         // fear meter
-        if (mouseX >= xPos-10 && mouseX <= xPos+10 && mouseY >= yPos-10 && mouseY <= yPos+10) {
+        if (mouseX >= xPos-10 && mouseX <= xPos+10 && mouseY >= yPos-10 && mouseY <= yPos+10 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
             if (currFear < fullFear) {
                 currFear++;
             }
@@ -454,14 +526,17 @@ class Mob {
             }
         }
         else {
-            currFear = 0;
+            if (currFear < fullFear) {
+                currFear = 0;
+            }
         }
 
         // threat timer
         if (xPos >= targetRow*100+100 &&
             xPos <= targetRow*100+200 &&
             yPos >= targetCol*100+200 &&
-            yPos <= targetCol*100+300) 
+            yPos <= targetCol*100+300 &&
+            !isRetreating) 
         {
             if (timer % 10 == 0) { 
                 currThreat--;
@@ -524,6 +599,7 @@ class Farm {
     int rows;
     int cols;
     int money;
+    int level;
 
     // Creates a farm with the number of Plots and staring money specified
     Farm(int rows, int cols, int start_money) {
@@ -536,6 +612,7 @@ class Farm {
             }
         }
         money = start_money;
+        level = 1;
     }
 
     // draws the farm
@@ -569,6 +646,52 @@ class Farm {
         textSize(30);
         text("Money: $" + str(money), 60, 60);
         
+        // Stats
+        fill(255);
+        strokeWeight(2);
+        rect(400, 35, 200, 20, 20);
+        rect(400, 65, 200, 20, 20);
+        fill(#89CFF0);
+        rect(480, 35, 40, 20, 0, 20, 20, 0);
+        int speed = min(5, farmer.speed);
+        for (int i = 1; i < speed; i++) {
+            if (i == 1) {
+                rect(320, 35, 40, 20, 20, 0, 0, 20);
+            }
+            else {
+                rect(320 + 40*(i - 1), 35, 40, 20);
+            }
+        }
+        fill(#F28C28);
+        rect(480, 65, 40, 20, 0, 20, 20, 0);
+        int reach = min(5, farmer.reach);
+        for (int i = 1; i < reach; i++) {
+            if (i == 1) {
+                rect(320, 65, 40, 20, 20, 0, 0, 20);
+            }
+            else {
+                rect(320 + 40*(i - 1), 65, 40, 20);
+            }
+        }
+        fill(0);
+        textSize(15);
+        text("Speed", 370, 40);
+        text("Reach", 370, 70);
+        text("+", 475, 40);
+        text("+", 475, 70);
+        strokeWeight(1.5); 
+
+        // Upgrades Available
+        if (farmer.upgradesAvailable > 0) {
+            textSize(20);
+            String upgradesAvailable = "x" + str(farmer.upgradesAvailable);
+            text(upgradesAvailable, 515, 55);
+        }
+
+        // Level
+        textSize(50);
+        String levelMsg = "Level " + str(level);
+        text(levelMsg, 325, 175);
     }
 
     // updates the farm when called, specifically updates the timer and reacts based on timer data
@@ -599,6 +722,56 @@ class Farm {
     void harvestCrop(int row, int col) {
         money = money + plots[row][col].getSell();
         destroyCrop(row, col);
+
+                // Leveling (may need to change later)
+        if (money >= 51200) {
+            if (level < 9) {
+                level = 9;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 25600) {
+            if (level < 8) {
+                level = 8;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 12800) {
+            if (level < 7) {
+                level = 7;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 6400) {
+            if (level < 6) {
+                level = 6;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 3200) {
+            if (level < 5) {
+                level = 5;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 1600) {
+            if (level < 4) {
+                level = 4;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 800) {
+            if (level < 3) {
+                level = 3;
+                farmer.upgradesAvailable += 1;
+            }
+        }
+        else if (money >= 400) {
+            if (level < 2) {
+                level = 2;
+                farmer.upgradesAvailable += 1;
+            }
+        }
     }
 
     void destroyCrop(int row, int col) {
