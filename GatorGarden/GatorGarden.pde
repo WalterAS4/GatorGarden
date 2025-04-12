@@ -1,24 +1,33 @@
 // Plant definitions
-static final int MOONFLOWER = 1;
+static final int WHEAT = 1;
+static final int CORN = 2;
+static final int THREE = 3;
+static final int FOUR = 4;
+static final int FIVE = 5;
+static final int SIX = 6;
+static final int SEVEN = 7;
+static final int EIGHT = 8;
+static final int NINE = 9;
 
 // Enemy definitions
 static final int FOX = 1;
+static final int WOLF = 2;
+static final int DRAGON = 3;
 
 int width, height;
 
 // Initializes a farmer, a farm, and the fox
 Farmer farmer = new Farmer();
 Farm farm = new Farm(6, 5, 100);
-Mob fox = new Mob(FOX, int(random(23)));
-// TODO: Initialize the other mobs
+Mob fox = new Mob(FOX);
+// Mob wolf = new Mob(WOLF);
+// Mob dragon = new Mob(DRAGON);
 
 // FOR DEBUGGING
 int prevKeyCode = 0;
 char prevKey = ' ';
 
-// TODO: Get rid of day/night cycle (scrapped idea)
-boolean isDay = true;
-int dayCount = 0;
+int timer = 0;
 
 void setup() {
     size(800,800);
@@ -33,10 +42,7 @@ void draw() {
     farm.updateFarm();
     farm.drawFarm();
     farmer.drawFarmer();
-    if (!isDay) {
-        fox.moveMob();
-        fox.drawMob();
-    }
+
     // Button Hover
     if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
         strokeWeight(2);
@@ -56,17 +62,34 @@ void draw() {
         text("+", 475, 70);
         strokeWeight(1.5);
     }
+
+    // custom cursor
+    if (mouseY <= 100) {
+        cursor(ARROW);
+    }
+    else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+        cursor(CROSS);
+    }
+    else {
+        cursor(ARROW);
+    }
+
+    // mob logic
+    if (fox.isGone()) {
+        fox.updateCooldown();
+        if (fox.getCooldown() <= 0) {
+            fox.resetMob();
+        }
+    }
+    else {
+        fox.updateMob();
+        fox.drawMob();
+    }
 }
 
 void mousePressed() {
-    // Day/Night Button
-    if (mouseX >= width-90 && mouseX <= width-10 && mouseY >= 10 && mouseY <= 90) {
-        if (isDay) {
-            isDay = !isDay;
-            farm.setNightTimer(1000);
-        }
-    }
-    else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
+
+    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
         farmer.speed += 1;
         farmer.upgradesAvailable -= 1;
     }
@@ -74,22 +97,23 @@ void mousePressed() {
         farmer.reach += 1;
         farmer.upgradesAvailable -= 1;
     }
-    // Plant/Harvest Crop
     else {
+        // Plant/Harvest Crop
         for (int i = 0; i < farm.getRows(); i++) {
             for (int j = 0; j < farm.getCols(); j++) {
                 if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-                    if (farm.getCropPlant(i, j) == 0 && farm.getMoney() >= 100) {
-                        farm.plantCrop(i, j, MOONFLOWER);
+                    if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
+                        farm.plantCrop(i, j, WHEAT);
                     }
                     else if (farm.isCropReady(i, j)) {
                         farm.harvestCrop(i,j);
                     }
-                    
+
                 }
             }
         }
     }
+
 }
 
 void keyPressed() {
@@ -152,10 +176,10 @@ void keyPressed() {
 
 // TODO: Implement more functions to draw each kind of plant
 
-// Draws a moonflower based on its age and health
-void drawMoonflower(int x, int y, int age, int health) {
+// Draws wheat based on its age
+void drawWheat(int x, int y, int age) {
     // TODO: Use images to draw the flower
-    if (age == 0) {
+    if (age < 100) {
         fill(53, 135, 41);
         ellipse(x, y, 20, 20);
     }
@@ -163,18 +187,12 @@ void drawMoonflower(int x, int y, int age, int health) {
         fill(222);
         ellipse(x, y, 40, 40);
     }
-    if (health < 100) {
-        rectMode(CORNERS);
-        noFill();
-        rect(x-25, y-40, x+25, y-30);
-        fill(33, 255, 0);
-        rect(x-25, y-40, x-25+health/2, y-30);
-        rectMode(CENTER);
-    }
 }
 
 // Class used to represent the player's character
 class Farmer {
+
+    // TODO: Implement a 'speed' variable
 
     int xPos, yPos;
     int upgradesAvailable;
@@ -195,10 +213,11 @@ class Farmer {
     // TODO: images will be used for the farmer and movement will be animated
     void drawFarmer() {
         fill(255);
-        rect(xPos, yPos, 10, 10);
+        rect(xPos, yPos, 16, 16);
     }
 
     // MOVEMENT FUNCTIONS
+    // TODO: Implement a 'speed' variable
     void moveDown() {
         int nextY = yPos + (speed + 1) * 2;
         // If inside the plots area
@@ -215,7 +234,6 @@ class Farmer {
         // Safe to move
         yPos = min(800, nextY);
     }
-
     void moveUp() {
         int nextY = yPos - (speed + 1) * 2;
         // If inside the plots area
@@ -232,7 +250,6 @@ class Farmer {
         // Safe to move
         yPos = max(100, nextY);
     }
-
     void moveLeft() {
         int nextX = xPos - (speed + 1) * 2;
         // If inside the plots area
@@ -249,7 +266,6 @@ class Farmer {
         // Safe to move
         xPos = max(0, nextX);
     }
-
     void moveRight() {
         int nextX = xPos + (speed + 1) * 2;
         // If inside the plots area
@@ -283,137 +299,294 @@ class Farmer {
 class Mob {
     int mob;
     int xPos, yPos;
-    int xTarget, yTarget;
-    int health;
-    int damage;
+    int xHome, yHome;
+    int targetRow, targetCol;
+    int fullThreat, currThreat;
+    int fullFear, currFear;
     int speed;
+    int cooldown;
 
-    Mob(int mob_type, int spawn_loc) {
+    boolean prefersX;
+    boolean isRetreating;
+    boolean isGone;
+    
+
+    Mob(int mob_type) {
         mob = mob_type;
-        if (mob_type == FOX) {
-            health = 100;
-            damage = 4;
-            speed = 1;
+        
+        if (mob == FOX) {
+            cooldown = 1000;
+        }
+        else if (mob == WOLF) {
+            cooldown = 1000;
+        }
+        else if (mob == DRAGON) {
+            cooldown = 1000;
         }
         else {
-            health = 100;
-            damage = 0;
-            speed = 0;
+            cooldown = 0;
+            println("ERROR: Not a valid mob type.");
         }
 
-        // TODO: Find an equation to simplify spawn location
-        switch(spawn_loc) {
-            case 0: xPos = 200; yPos = 100; break;
-            case 1: xPos = 100; yPos = 100; break;
-            case 2: xPos = 0; yPos = 200; break;
-            case 3: xPos = 0; yPos = 300; break;
-            case 4: xPos = 0; yPos = 400; break;
-            case 5: xPos = 0; yPos = 500; break;
-            case 6: xPos = 0; yPos = 600; break;
-            case 7: xPos = 0; yPos = 700; break;
-            case 8: xPos = 100; yPos = 800; break;
-            case 9: xPos = 200; yPos = 800; break;
-            case 10: xPos = 300; yPos = 800; break;
-            case 11: xPos = 400; yPos = 800; break;
-            case 12: xPos = 500; yPos = 800; break;
-            case 13: xPos = 600; yPos = 800; break;
-            case 14: xPos = 700; yPos = 800; break;
-            case 15: xPos = 800; yPos = 700; break;
-            case 16: xPos = 800; yPos = 600; break;
-            case 17: xPos = 800; yPos = 500; break;
-            case 18: xPos = 800; yPos = 400; break;
-            case 19: xPos = 800; yPos = 300; break;
-            case 20: xPos = 800; yPos = 200; break;
-            case 21: xPos = 700; yPos = 100; break;
-            case 22: xPos = 600; yPos = 100; break;
-            default: break;
-        }
-
-        xTarget = farmer.xPos;
-        yTarget = farmer.yPos;
+        resetMob();
     }
 
     // Resets the mob so it can return after it is dealt with by the player
     void resetMob() {
         if (mob == FOX) {
-            health = 100;
-            damage = 4;
+            fullThreat = 60;
+            currThreat = 60;
+            fullFear = 50;
+            currFear = 0;
+            speed = 1;
+        }
+        else if (mob == WOLF) {
+            fullThreat = 60;
+            currThreat = 60;
+            fullFear = 50;
+            currFear = 0;
+            speed = 1;
+        }
+        else if (mob == DRAGON) {
+            fullThreat = 60;
+            currThreat = 60;
+            fullFear = 50;
+            currFear = 0;
             speed = 1;
         }
         else {
-            health = 100;
-            damage = 0;
-            speed = 0;
+            fullThreat = 0;
+            currThreat = 0;
+            speed = 0;  
         }
 
+        SetSpawnAndTarget();
+
+        int r = int(random(2));
+        if (r == 0) { prefersX = true; }
+        else if (r == 1) { prefersX = false; }
+
+    }
+
+    void SetSpawnAndTarget() {
         int spawn_loc = int(random(23));
         switch(spawn_loc) {
-            case 0: xPos = 200; yPos = 100; break;
-            case 1: xPos = 100; yPos = 100; break;
-            case 2: xPos = 0; yPos = 200; break;
-            case 3: xPos = 0; yPos = 300; break;
-            case 4: xPos = 0; yPos = 400; break;
-            case 5: xPos = 0; yPos = 500; break;
-            case 6: xPos = 0; yPos = 600; break;
-            case 7: xPos = 0; yPos = 700; break;
-            case 8: xPos = 100; yPos = 800; break;
-            case 9: xPos = 200; yPos = 800; break;
-            case 10: xPos = 300; yPos = 800; break;
-            case 11: xPos = 400; yPos = 800; break;
-            case 12: xPos = 500; yPos = 800; break;
-            case 13: xPos = 600; yPos = 800; break;
-            case 14: xPos = 700; yPos = 800; break;
-            case 15: xPos = 800; yPos = 700; break;
-            case 16: xPos = 800; yPos = 600; break;
-            case 17: xPos = 800; yPos = 500; break;
-            case 18: xPos = 800; yPos = 400; break;
-            case 19: xPos = 800; yPos = 300; break;
-            case 20: xPos = 800; yPos = 200; break;
-            case 21: xPos = 700; yPos = 100; break;
-            case 22: xPos = 600; yPos = 100; break;
+            case 0: xPos = 200; yPos = 100; xHome = 200; yHome = 100; break;
+            case 1: xPos = 100; yPos = 100; xHome = 100; yHome = 100; break;
+            case 2: xPos = 0; yPos = 200; xHome = 0; yHome = 200; break;
+            case 3: xPos = 0; yPos = 300; xHome = 0; yHome = 300; break;
+            case 4: xPos = 0; yPos = 400; xHome = 0; yHome = 400; break;
+            case 5: xPos = 0; yPos = 500; xHome = 0; yHome = 500; break;
+            case 6: xPos = 0; yPos = 600; xHome = 0; yHome = 600; break;
+            case 7: xPos = 0; yPos = 700; xHome = 0; yHome = 700; break;
+            case 8: xPos = 100; yPos = 800; xHome = 100; yHome = 800; break;
+            case 9: xPos = 200; yPos = 800; xHome = 200; yHome = 800; break;
+            case 10: xPos = 300; yPos = 800; xHome = 300; yHome = 800; break;
+            case 11: xPos = 400; yPos = 800; xHome = 400; yHome = 800; break;
+            case 12: xPos = 500; yPos = 800; xHome = 500; yHome = 800; break;
+            case 13: xPos = 600; yPos = 800; xHome = 600; yHome = 800; break;
+            case 14: xPos = 700; yPos = 800; xHome = 700; yHome = 800; break;
+            case 15: xPos = 800; yPos = 700; xHome = 800; yHome = 700; break;
+            case 16: xPos = 800; yPos = 600; xHome = 800; yHome = 600; break;
+            case 17: xPos = 800; yPos = 500; xHome = 800; yHome = 500; break;
+            case 18: xPos = 800; yPos = 400; xHome = 800; yHome = 400; break;
+            case 19: xPos = 800; yPos = 300; xHome = 800; yHome = 300; break;
+            case 20: xPos = 800; yPos = 200; xHome = 800; yHome = 200; break;
+            case 21: xPos = 700; yPos = 100; xHome = 700; yHome = 100; break;
+            case 22: xPos = 600; yPos = 100; xHome = 600; yHome = 100; break;
             default: break;
         }
 
-        xTarget = farmer.getXPos();
-        yTarget = farmer.getYPos();
+        targetRow = -1;
+        targetCol = -1;
+        isGone = true;
+        isRetreating = true;
+        
+        int randomRow = int(random(farm.getRows()));
+        int randomCol = int(random(farm.getCols()));
+        for (int i = 0; i < farm.getRows(); i++) {
+            for (int j = 0; j < farm.getCols(); j++) {
+                if (farm.getCropType((i+randomRow) % farm.getRows(), (j+randomCol) % farm.getCols()) != 0) {
+                    targetRow = (i+randomRow) % farm.getRows();
+                    targetCol = (j+randomCol) % farm.getCols();
+                    isGone = false;
+                    isRetreating = false;
+
+                    if (mob == FOX) {
+                        cooldown = 1000;
+                    }
+                    if (mob == WOLF) {
+                        cooldown = 1000;
+                    }
+                    if (mob == DRAGON) {
+                        cooldown = 1000;
+                    }
+                }
+            }
+        }
+    }
+
+    void updateCooldown() {
+        if (cooldown > 0) {
+            cooldown--;
+        }
     }
 
     void drawMob() {
         fill(60, 105, 66);
-        rect(xPos, yPos, 10, 10);
-        if (health < 100) {
+        rect(xPos, yPos, 16, 16);
+
+        // fear meter
+        if (currFear > 0) {
+            fill(255,255,0);
             noStroke();
-            fill(33, 255, 0);
-            rect(xPos, yPos-15, 50, 5);
+            rectMode(CORNERS);
+            rect(xPos-fullFear/4, yPos-10, xPos-fullFear/4+currFear/2, yPos-15);
+            noFill();
             stroke(0);
+            rect(xPos-fullFear/4, yPos-10, xPos+fullFear/4, yPos-15);
+            rectMode(CENTER);
+        }
+
+        // threat timer
+        if (xPos >= targetRow*100+100 &&
+            xPos <= targetRow*100+200 &&
+            yPos >= targetCol*100+200 &&
+            yPos <= targetCol*100+300) 
+        {
+            fill(255,0,0);
+            noStroke();
+            arc(xPos, yPos-30, 30, 30, (fullThreat-currThreat)*2*PI/fullThreat-(PI/2), 3*PI/2);
+            stroke(0);
+            noFill();
+            ellipse(xPos, yPos-30, 30, 30);
         }
     }
 
     // TODO: Create function that calculates a path for the mob to take
-    void moveMob() {
-        xTarget = farmer.getXPos();
-        yTarget = farmer.getYPos();
+    void updateMob() {
+        if (!isRetreating) {
+            if (xPos < 100) {
+                xPos += speed;
+            }
+            else if (xPos > width-100) {
+                xPos -= speed;
+            }
+            else if (yPos < 200) {
+                yPos += speed;
+            }
+            else if (yPos > height-100) {
+                yPos -= speed;
+            }
+            else if (prefersX) {
+                if (xPos < targetRow*100+108) {
+                    xPos += speed;
+                }
+                else if (xPos > targetRow*100+192) {
+                    xPos -= speed;
+                }
+                else if (yPos < targetCol*100+208) {
+                    yPos += speed;
+                }
+                else if (yPos > targetCol*100+292) {
+                    yPos -= speed;
+                }
+            }
+            else {
+                if (yPos < targetCol*100+208) {
+                    yPos += speed;
+                }
+                else if (yPos > targetCol*100+292) {
+                    yPos -= speed;
+                }
+                else if (xPos < targetRow*100+108) {
+                    xPos += speed;
+                }
+                else if (xPos > targetRow*100+192) {
+                    xPos -= speed;
+                }
+            }
+        }
+        else {
+            if (xPos <= 0 || xPos >= width || yPos <= 100 || yPos >= height) {
+                isGone = true;
+            }
+            else if (xPos % 100 != 0 && xPos <= width/2) {
+                xPos -= speed;
+            }
+            else if (xPos % 100 != 0 && xPos > width/2) {
+                xPos += speed;
+            }
+            else if (yPos % 100 != 0) {
+                yPos += speed;
+            }
+            else if (height-yPos < width-xPos && height-yPos < abs(xPos-width)) {
+                yPos += speed;
+            }
+            else if (xPos <= width/2) {
+                xPos -= speed;
+            }
+            else {
+                xPos += speed;
+            }
+        }
+
+        // check if target is still there
+        if (farm.getCropType(targetRow, targetCol) == 0) {
+            isRetreating = true;
+        }
+
+        // fear meter
+        if (mouseX >= xPos-10 && mouseX <= xPos+10 && mouseY >= yPos-10 && mouseY <= yPos+10 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+            if (currFear < fullFear) {
+                currFear++;
+            }
+            else {
+                isRetreating = true;
+            }
+        }
+        else {
+            if (currFear < fullFear) {
+                currFear = 0;
+            }
+        }
+
+        // threat timer
+        if (xPos >= targetRow*100+100 &&
+            xPos <= targetRow*100+200 &&
+            yPos >= targetCol*100+200 &&
+            yPos <= targetCol*100+300 &&
+            !isRetreating) 
+        {
+            if (timer % 10 == 0) { 
+                currThreat--;
+                if (currThreat <= 0) {
+                    farm.destroyCrop(targetRow, targetCol);
+                    isRetreating = true;
+                }
+            }
+        }
     }
+
+    // GETTERS
+    int getCooldown() { return cooldown; }
+    boolean isGone() { return isGone; }
 }
 
 // Represents an individual tile that crops can be planted on
 class Plot {
     int plant; 
-    int health;
     int age;
     int lifespan;
     int cost;
     int sell;
-    int base_attraction;
 
     Plot() {
         plant = 0;
-        health = 100;
         age = 0;
         lifespan = 0;
         cost = 0;
         sell = 0;
-        base_attraction = 0;
     }
 
     // returns true if the crop is ready to be harvested / can be sold
@@ -426,21 +599,17 @@ class Plot {
     
     // GETTERS
     int getPlant() { return plant; }
-    int getHealth() { return health; }
     int getAge() { return age; }
     int getLifespan() { return lifespan; }
     int getCost() { return cost; }
     int getSell() { return sell; }
-    int getAttraction() { return base_attraction; }
 
     // SETTERS
     void setPlant(int plant) { this.plant = plant; }
-    void setHealth(int health) { this.health = health; }
     void setAge(int age) { this.age = age; }
     void setLifespan(int lifespan) { this.lifespan = lifespan; }
     void setCost(int cost) { this.cost = cost; }
     void setSell(int sell) { this.sell = sell; }
-    void setAttraction(int base_attraction) { this.base_attraction = base_attraction; }
 
 }
 
@@ -450,7 +619,6 @@ class Farm {
     int rows;
     int cols;
     int money;
-    int nightTimer;
     int level;
 
     // Creates a farm with the number of Plots and staring money specified
@@ -464,7 +632,6 @@ class Farm {
             }
         }
         money = start_money;
-        nightTimer = 0;
         level = 1;
     }
 
@@ -476,8 +643,8 @@ class Farm {
             for (int j = 0; j < cols; j++) {
                 fill(92, 64, 38);
                 rect(i*100+150, j*100+250, 80, 80);
-                if (plots[i][j].getPlant() == MOONFLOWER) {
-                    drawMoonflower(i*100+150, j*100+250, plots[i][j].getAge(), plots[i][j].getHealth());
+                if (plots[i][j].getPlant() == WHEAT) {
+                    drawWheat(i*100+150, j*100+250, plots[i][j].getAge());
                 }
             }
         }
@@ -486,40 +653,13 @@ class Farm {
         fill(120);
         rect(width/2, 50, width-10, 90);
 
-        // day/night button
-        if (isDay) {
-            fill(255, 225, 28);
-            rect(width-50, 50, 80, 80);
-        }
-        else {
-            fill(18, 18, 74);
-            rect(width-50, 50, 80, 80);
-            fill(67, 158, 168);
-            textSize(30);
-            if (nightTimer < 100) {
-                text("00", width-65, 60);
-            }
-            else if (nightTimer < 1000) { 
-                text("0", width-65, 60);
-                text(str(nightTimer).substring( 0, str(nightTimer).length()-2 ), width-50, 60); 
-            }
-            else {
-                text(str(nightTimer).substring( 0, str(nightTimer).length()-2 ), width-65, 60);
-            }
-        }
-
-        // Day counter
+        // Timer
+        fill(246, 246, 67);
+        rect(width-50, 50, 80, 80);
         fill(0);
         textSize(30);
-        if (dayCount < 10) {
-            text("Day: 00" + str(dayCount), width-225, 60);
-        }
-        else if (dayCount < 100) {
-            text("Day: 0" + str(dayCount), width-225, 60);
-        }
-        else {
-            text(str(dayCount), width-100, 60);
-        }
+        if (timer < 100) { text("Time: 0", width-225, 60); }
+        else { text("Time: " + str(timer).substring(0, str(timer).length() - 2), width-225, 60); }
 
         // Money
         fill(0);
@@ -559,7 +699,7 @@ class Farm {
         text("Reach", 370, 70);
         text("+", 475, 40);
         text("+", 475, 70);
-        strokeWeight(1.5);
+        strokeWeight(1.5); 
 
         // Upgrades Available
         if (farmer.upgradesAvailable > 0) {
@@ -576,50 +716,34 @@ class Farm {
 
     // updates the farm when called, specifically updates the timer and reacts based on timer data
     void updateFarm() {
-        if (!isDay && nightTimer == 0) {
-            isDay = true;
-            dayCount++;
-            for (int i = 0; i < rows; i++) {
-                for (int j = 0; j < cols; j++) {
-                    if (plots[i][j].getPlant() != 0) {
-                        plots[i][j].incAge();
-                    }
+        timer++;
+        for (int i = 0; i < rows; i++) {
+            for (int j = 0; j < cols; j++) {
+                if (plots[i][j].getPlant() != 0 && timer % 10 == 0) {
+                    plots[i][j].incAge();
                 }
             }
-            fox.resetMob();
-        }
-        else {
-            nightTimer = nightTimer - 1;
         }
     }
 
     // plants a crop of a specified type on the Plot of the given coordinate
     void plantCrop(int row, int col, int plant) {
         plots[row][col].setPlant(plant);
-        if (plant == MOONFLOWER) {
-            plots[row][col].setHealth(100);
+        if (plant == WHEAT) {
             plots[row][col].setAge(0);
-            plots[row][col].setLifespan(1);
+            plots[row][col].setLifespan(100);
             plots[row][col].setCost(100);
             plots[row][col].setSell(200);
-            plots[row][col].setAttraction(1);
+            money = money - 100;
         }
-        // TODO: Adjust money spent based on plant type
-        money = money - 100;
     }
 
     // Removes the crop from the Plot at the given coordinate
     void harvestCrop(int row, int col) {
         money = money + plots[row][col].getSell();
-        plots[row][col].setPlant(0);
-        plots[row][col].setHealth(100);
-        plots[row][col].setAge(0);
-        plots[row][col].setLifespan(0);
-        plots[row][col].setCost(0);
-        plots[row][col].setSell(0);
-        plots[row][col].setAttraction(0);
+        destroyCrop(row, col);
 
-        // Leveling (may need to change later)
+                // Leveling (may need to change later)
         if (money >= 51200) {
             if (level < 9) {
                 level = 9;
@@ -670,14 +794,20 @@ class Farm {
         }
     }
 
+    void destroyCrop(int row, int col) {
+        plots[row][col].setPlant(0);
+        plots[row][col].setAge(0);
+        plots[row][col].setLifespan(0);
+        plots[row][col].setCost(0);
+        plots[row][col].setSell(0);
+    }
+
     // GETTERS
     int getRows() { return rows; }
     int getCols() { return cols; }
     int getMoney() { return money; }
-    int getCropPlant(int row, int col) { return plots[row][col].getPlant(); }
+    int getCropType(int row, int col) { return plots[row][col].getPlant(); }
     boolean isCropReady(int row, int col) { return plots[row][col].harvestable(); }
-
-    // SETTERS
-    void setNightTimer(int nightTimer) { this.nightTimer = nightTimer; }
 }
+
 
