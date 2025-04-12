@@ -767,12 +767,6 @@ class Farm {
                 if (plots[i][j].getPlant() == WHEAT) {
                     drawWheat(i*100+150, j*100+250, plots[i][j].getAge());
                 }
-                else {
-                    image(dirt, i*100+150-15, j*100+250-15, 16, 16);
-                    image(dirt, i*100+150-15, j*100+250+15, 16, 16);
-                    image(dirt, i*100+150+15, j*100+250+15, 16, 16);
-                    image(dirt, i*100+150+15, j*100+250-15, 16, 16);
-                }
             }
         }
 
