@@ -346,7 +346,7 @@ class Mob {
 
         // fear meter
         if (currFear > 0) {
-            fill(0,255,0);
+            fill(255,255,0);
             noStroke();
             rectMode(CORNERS);
             rect(xPos-fullFear/4, yPos-10, xPos-fullFear/4+currFear/2, yPos-15);
