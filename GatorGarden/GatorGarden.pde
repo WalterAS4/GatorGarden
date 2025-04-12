@@ -542,6 +542,7 @@ class Mob {
                 currFear++;
             }
             else {
+                if (!isRetreating) { farm.xp += 50; }
                 isRetreating = true;
             }
         }
@@ -580,6 +581,7 @@ class Plot {
     int lifespan;
     int cost;
     int sell;
+    int xpval;
 
     Plot() {
         plant = 0;
@@ -587,6 +589,7 @@ class Plot {
         lifespan = 0;
         cost = 0;
         sell = 0;
+        xpval = 0;
     }
 
     // returns true if the crop is ready to be harvested / can be sold
@@ -603,6 +606,7 @@ class Plot {
     int getLifespan() { return lifespan; }
     int getCost() { return cost; }
     int getSell() { return sell; }
+    int getXpval() { return xpval; }
 
     // SETTERS
     void setPlant(int plant) { this.plant = plant; }
@@ -610,6 +614,7 @@ class Plot {
     void setLifespan(int lifespan) { this.lifespan = lifespan; }
     void setCost(int cost) { this.cost = cost; }
     void setSell(int sell) { this.sell = sell; }
+    void setXpval(int xpval) { this.xpval = xpval; }
 
 }
 
@@ -619,6 +624,9 @@ class Farm {
     int rows;
     int cols;
     int money;
+    int xp;
+    int xpForNextLevel;
+    int xpForPrevLevel;
     int level;
 
     // Creates a farm with the number of Plots and staring money specified
@@ -632,7 +640,11 @@ class Farm {
             }
         }
         money = start_money;
+        xp = 0;
+        xpForNextLevel = 400;
+        xpForPrevLevel = 0;
         level = 1;
+        
     }
 
     // draws the farm
@@ -653,9 +665,18 @@ class Farm {
         fill(120);
         rect(width/2, 50, width-10, 90);
 
+        // xp meter
+        rectMode(CORNERS);
+        fill(0, 127, 0);
+        rect(width-90, 90, width-10, 10);
+        fill(0, 255, 0);
+        rect(width-90, 90, width-10, 90-80*(xp-xpForPrevLevel)/(xpForNextLevel-xpForPrevLevel));
+        rectMode(CENTER);
+        fill(0);
+        textSize(30);
+        text(farm.level, width-56, 60);
+
         // Timer
-        fill(246, 246, 67);
-        rect(width-50, 50, 80, 80);
         fill(0);
         textSize(30);
         if (timer < 100) { text("Time: 0", width-225, 60); }
@@ -734,63 +755,8 @@ class Farm {
             plots[row][col].setLifespan(100);
             plots[row][col].setCost(100);
             plots[row][col].setSell(200);
+            plots[row][col].setXpval(100);
             money = money - 100;
-        }
-    }
-
-    // Removes the crop from the Plot at the given coordinate
-    void harvestCrop(int row, int col) {
-        money = money + plots[row][col].getSell();
-        destroyCrop(row, col);
-
-                // Leveling (may need to change later)
-        if (money >= 51200) {
-            if (level < 9) {
-                level = 9;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 25600) {
-            if (level < 8) {
-                level = 8;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 12800) {
-            if (level < 7) {
-                level = 7;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 6400) {
-            if (level < 6) {
-                level = 6;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 3200) {
-            if (level < 5) {
-                level = 5;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 1600) {
-            if (level < 4) {
-                level = 4;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 800) {
-            if (level < 3) {
-                level = 3;
-                farmer.upgradesAvailable += 1;
-            }
-        }
-        else if (money >= 400) {
-            if (level < 2) {
-                level = 2;
-                farmer.upgradesAvailable += 1;
-            }
         }
     }
 
@@ -800,6 +766,22 @@ class Farm {
         plots[row][col].setLifespan(0);
         plots[row][col].setCost(0);
         plots[row][col].setSell(0);
+        plots[row][col].setXpval(0);
+    }
+
+    // Removes the crop from the Plot at the given coordinate
+    void harvestCrop(int row, int col) {
+        money = money + plots[row][col].getSell();
+        xp = xp + plots[row][col].getXpval();
+        destroyCrop(row, col);
+
+        // Leveling
+        if (xp >= xpForNextLevel && level < 9) {
+            level++;
+            farmer.upgradesAvailable += 1;
+            xpForPrevLevel = xpForNextLevel;
+            xpForNextLevel *= 2;
+        }
     }
 
     // GETTERS
