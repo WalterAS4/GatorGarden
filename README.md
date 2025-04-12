@@ -1,5 +1,5 @@
 # GatorGarden ![image](https://github.com/user-attachments/assets/11f3afe6-5428-4d60-9253-614a8fd4f2c5)
-As a gator, plant and harvest crops while defending them from evil mobs! Planting crops cost money, and harvesting crops rewards money.
+As a gator, plant and harvest crops while defending them from evil mobs! Planting crops cost money and harvesting crops rewards money.
 
 ## ![image](https://github.com/user-attachments/assets/5c4b7b57-a124-4333-98fc-3382344a5f7b) Levels/Skills
 
