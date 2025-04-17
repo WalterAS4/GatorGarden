@@ -16,6 +16,47 @@ static final int DRAGON = 3;
 
 int width, height;
 
+//menu definitions
+boolean menuOpen = false;
+int selectedRow = -1;
+int selectedCol = -1;
+
+void menu() {
+  if (!menuOpen) return;
+  
+  //menu
+  fill(200, 200, 200, 230);
+  stroke(0);
+  rectMode(CENTER);
+  int menuWidth = 300;
+  int menuHeight = 400;
+  rect(width/2, height/2, menuWidth, menuHeight, 10);
+  fill(0);
+  textSize(24);
+  textAlign(CENTER);
+  text("Plant Shop", width/2, height/2 - 160);
+  
+  //crops:
+  //wheat
+  fill(235, 235, 200);
+  rect(width/2, height/2 - 100, menuWidth - 40, 60, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Wheat", width/2 - 120, height/2 - 95);
+  text("Cost: $100", width/2 - 120, height/2 - 75);
+  image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
+  
+  //more crops:
+  
+  //close button
+  fill(255, 200, 200);
+  rect(width/2, height/2 + 140, 120, 40, 10);
+  fill(0);
+  textAlign(CENTER);
+  text("Close", width/2, height/2 + 145);
+}
+
 // Initializes a farmer, a farm, and the fox
 Farmer farmer = new Farmer();
 Farm farm = new Farm(6, 5, 100);
@@ -110,9 +151,29 @@ void draw() {
         fox.updateMob();
         fox.drawMob();
     }
+
+    menu();
 }
 
 void mousePressed() {
+    //for menu
+    //if menu open, handle clicks
+    if (menuOpen) {
+        //check if close button was clicked
+        if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+            menuOpen = false;
+        }
+        //crops:
+        else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+            if (farm.getMoney() >= 100) {
+                farm.plantCrop(selectedRow, selectedCol, WHEAT);
+                menuOpen = false;
+            }
+        }   
+        //more crops:
+    
+        return;
+    }
 
     if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
         farmer.speed += 1;
@@ -127,8 +188,14 @@ void mousePressed() {
         for (int i = 0; i < farm.getRows(); i++) {
             for (int j = 0; j < farm.getCols(); j++) {
                 if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-                    if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
-                        farm.plantCrop(i, j, WHEAT);
+                    // if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
+                    //     farm.plantCrop(i, j, WHEAT);
+                    // }
+                    //check if plot empty to show menu
+                    if (farm.getCropType(i, j) == 0) {
+                        menuOpen = true;
+                        selectedRow = i;
+                        selectedCol = j;
                     }
                     else if (farm.isCropReady(i, j)) {
                         farm.harvestCrop(i,j);
