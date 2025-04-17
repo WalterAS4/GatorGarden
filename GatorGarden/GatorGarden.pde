@@ -55,6 +55,8 @@ void menu() {
   fill(0);
   textAlign(CENTER);
   text("Close", width/2, height/2 + 145);
+
+  textAlign(BASELINE);
 }
 
 // Initializes a farmer, a farm, and the fox
