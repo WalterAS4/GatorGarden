@@ -81,6 +81,7 @@ PImage dirt;
 PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
 
 // SoundFile initializations
+SoundFile backgroundMusic;
 SoundFile buttonClick, gameStart, levelUp;
 SoundFile earningCoins, planting, scaring, stealing, walking;
 
@@ -113,6 +114,7 @@ void setup() {
     wheat6 = loadImage("ImageFiles/Wheat6.png");
 
     // Sound loading
+    backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
     buttonClick = new SoundFile(this, "AudioFiles/Button Click.mp3");
     gameStart = new SoundFile(this, "AudioFiles/Game Start.wav");
     levelUp = new SoundFile(this, "AudioFiles/Level Up.wav");
@@ -121,6 +123,9 @@ void setup() {
     scaring = new SoundFile(this, "AudioFiles/Scaring Mobs.mp3");
     stealing = new SoundFile(this, "AudioFiles/Stealing Crops.mp3");
     walking = new SoundFile(this, "AudioFiles/Walking.mp3");
+    
+    backgroundMusic.amp(0.001);
+    backgroundMusic.loop();
 }
 
 void draw() {
