@@ -23,6 +23,9 @@ boolean menuOpen = false;
 int selectedRow = -1;
 int selectedCol = -1;
 
+// 1 = start menu, 2 = level select, 3 = gameplay, 4 = pause menu, 4 = end menu
+int gameState = 1;
+
 void menu() {
   if (!menuOpen) return;
   
@@ -79,6 +82,7 @@ PImage gatorWalk1, gatorWalk2, gatorWalk3, gatorWalk4;
 PImage foxWalk1, foxWalk2, foxWalk3, foxWalk4;
 PImage dirt;
 PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
+PImage backButton;
 
 // SoundFile initializations
 SoundFile backgroundMusic;
@@ -112,6 +116,7 @@ void setup() {
     wheat4 = loadImage("ImageFiles/Wheat4.png");
     wheat5 = loadImage("ImageFiles/Wheat5.png");
     wheat6 = loadImage("ImageFiles/Wheat6.png");
+    backButton = loadImage("ImageFiles/Back Button.png");
 
     // Sound loading
     backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
@@ -124,175 +129,274 @@ void setup() {
     stealing = new SoundFile(this, "AudioFiles/Stealing Crops.mp3");
     walking = new SoundFile(this, "AudioFiles/Walking.mp3");
     
-    backgroundMusic.amp(0.001);
-    backgroundMusic.loop();
+    // backgroundMusic.loop();
 }
 
 void draw() {
     background(161, 126, 93);
-    farm.updateFarm();
-    farm.drawFarm();
-    farmer.drawFarmer();
-
-    // Button Hover
-    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
-        strokeWeight(2);
-        fill(#b5e0f5);
-        rect(480, 35, 40, 20, 0, 20, 20, 0);
+    // Start Menu
+    if (gameState == 1) {
         fill(0);
-        textSize(15);
-        text("+", 475, 40);
-        strokeWeight(1.5);
-    }
-    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
-        strokeWeight(2);
-        fill(#f5b87a);
-        rect(480, 65, 40, 20, 0, 20, 20, 0);
+        textSize(84);
+        textAlign(CENTER);
+        text("GatorGarden", 400, 200);
+        fill(255);
+        rect(400, 325, 390, 90, 50);
+        rect(400, 450, 390, 90, 50);
+        rect(400, 575, 390, 90, 50);
         fill(0);
-        textSize(15);
-        text("+", 475, 70);
-        strokeWeight(1.5);
+        textSize(48);
+        text("Start Game", 400, 335);
+        text("Level Select", 400, 460);
+        text("Exit", 400, 590);
+        textAlign(BASELINE);
     }
+    // Level Select
+    else if (gameState == 2) {
+        fill(0);
+        textSize(72);
+        textAlign(CENTER);
+        text("Level Select", 400, 175);
+        fill(255);
+        rect(255, 300, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 300, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 300, 100, 100, 25);
+        resetMatrix();
+        rect(255, 450, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 450, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 450, 100, 100, 25);
+        resetMatrix();
+        rect(255, 600, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 600, 100, 100, 25);
+        translate(150, 0);
+        rect(255, 600, 100, 100, 25);
+        resetMatrix();
+        fill(0);
+        textSize(48);
+        text("1", 255, 315);
+        translate(150, 0);
+        text("2", 255, 315);
+        translate(150, 0);
+        text("3", 255, 315);
+        resetMatrix();
+        text("4", 255, 465);
+        translate(150, 0);
+        text("5", 255, 465);
+        translate(150, 0);
+        text("6", 255, 465);
+        resetMatrix();
+        text("7", 255, 615);
+        translate(150, 0);
+        text("8", 255, 615);
+        translate(150, 0);
+        text("9", 255, 615);
+        resetMatrix();
 
-    // custom cursor
-    if (mouseY <= 100) {
-        cursor(ARROW);
+        // Back Button
+        image(backButton, 75, 75);
+        textAlign(BASELINE);
     }
-    else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-        cursor(CROSS);
-    }
-    else {
-        cursor(ARROW);
-    }
+    // Gameplay
+    else if (gameState == 3) {
+        farm.updateFarm();
+        farm.drawFarm();
+        farmer.drawFarmer();
 
-    // mob logic
-    if (fox.isGone()) {
-        fox.updateCooldown();
-        if (fox.getCooldown() <= 0) {
-            fox.resetMob();
+        // Button Hover
+        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
+            strokeWeight(2);
+            fill(#b5e0f5);
+            rect(480, 35, 40, 20, 0, 20, 20, 0);
+            fill(0);
+            textSize(15);
+            text("+", 475, 40);
+            strokeWeight(1.5);
         }
-    }
-    else {
-        fox.updateMob();
-        fox.drawMob();
-    }
+        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
+            strokeWeight(2);
+            fill(#f5b87a);
+            rect(480, 65, 40, 20, 0, 20, 20, 0);
+            fill(0);
+            textSize(15);
+            text("+", 475, 70);
+            strokeWeight(1.5);
+        }
 
-    menu();
+        // custom cursor
+        if (mouseY <= 100) {
+            cursor(ARROW);
+        }
+        else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+            cursor(CROSS);
+        }
+        else {
+            cursor(ARROW);
+        }
+
+        // mob logic
+        if (fox.isGone()) {
+            fox.updateCooldown();
+            if (fox.getCooldown() <= 0) {
+                fox.resetMob();
+            }
+        }
+        else {
+            fox.updateMob();
+            fox.drawMob();
+        }
+
+        menu();
+    }
+    // Pause Menu
+    else if (gameState == 4) {
+
+    }
+    // End Menu
+    else {
+
+    }
 }
 
 void mousePressed() {
-    //for menu
-    //if menu open, handle clicks
-    if (menuOpen) {
-        //check if close button was clicked
-        if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
-            menuOpen = false;
+    if (gameState == 1) {
+        if (mouseX >= 205 && mouseX <= 595 && mouseY >= 280 && mouseY <= 370) {
+            gameState = 3;
+        }
+        else if (mouseX >= 205 && mouseX <= 595 && mouseY >= 405 && mouseY <= 495) {
+            gameState = 2;
+        }
+        else if (mouseX >= 205 && mouseX <= 595 && mouseY >= 530 && mouseY <= 620) {
+            exit();
+        }
+    }
+    else if (gameState == 2) {
+        // TODO: implement level buttons
+
+        // Back Button
+        if (mouseX >= 37 && mouseX <= 113 && mouseY >= 37 && mouseY <= 113) {
+            gameState = 1;
+        }
+    }
+    else if (gameState == 3) {
+        //for menu
+        //if menu open, handle clicks
+        if (menuOpen) {
+            //check if close button was clicked
+            if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+                menuOpen = false;
+                buttonClick.play();
+            }
+            // Plant crop:
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+                if (farm.getMoney() >= 100) {
+                    farm.plantCrop(selectedRow, selectedCol, WHEAT);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }   
+            //more crops:
+        
+            return;
+        }
+
+        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
+            farmer.speed += 1;
+            farmer.upgradesAvailable -= 1;
             buttonClick.play();
         }
-        // Plant crop:
-        else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
-            if (farm.getMoney() >= 100) {
-                farm.plantCrop(selectedRow, selectedCol, WHEAT);
-                menuOpen = false;
-                planting.play();
-            }
-        }   
-        //more crops:
-    
-        return;
-    }
+        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
+            farmer.reach += 1;
+            farmer.upgradesAvailable -= 1;
+            buttonClick.play();
+        }
+        else {
+            // Harvest Crop
+            for (int i = 0; i < farm.getRows(); i++) {
+                for (int j = 0; j < farm.getCols(); j++) {
+                    if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+                        // if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
+                        //     farm.plantCrop(i, j, WHEAT);
+                        // }
+                        //check if plot empty to show menu
+                        if (farm.getCropType(i, j) == 0) {
+                            menuOpen = true;
+                            selectedRow = i;
+                            selectedCol = j;
+                            buttonClick.play();
+                        }
+                        else if (farm.isCropReady(i, j)) {
+                            farm.harvestCrop(i,j);
+                            earningCoins.play();
+                        }
 
-    if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
-        farmer.speed += 1;
-        farmer.upgradesAvailable -= 1;
-        buttonClick.play();
-    }
-    else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
-        farmer.reach += 1;
-        farmer.upgradesAvailable -= 1;
-        buttonClick.play();
-    }
-    else {
-        // Harvest Crop
-        for (int i = 0; i < farm.getRows(); i++) {
-            for (int j = 0; j < farm.getCols(); j++) {
-                if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-                    // if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
-                    //     farm.plantCrop(i, j, WHEAT);
-                    // }
-                    //check if plot empty to show menu
-                    if (farm.getCropType(i, j) == 0) {
-                        menuOpen = true;
-                        selectedRow = i;
-                        selectedCol = j;
-                        buttonClick.play();
                     }
-                    else if (farm.isCropReady(i, j)) {
-                        farm.harvestCrop(i,j);
-                        earningCoins.play();
-                    }
-
                 }
             }
         }
     }
-
 }
 
 void keyPressed() {
-    if (key == CODED) {
+    if (gameState == 3) {
+        if (key == CODED) {
 
-        // FOR DEBUGGING
-        /* 
-        if (prevKeyCode != keyCode) {
-            prevKeyCode = keyCode;
-            println(keyCode);
-        }
-        */
-        
-        // Arrow key input for moving farmer
-        if (keyCode == UP) {
-            farmer.moveUp();
-        }
-        else if (keyCode == DOWN) {
-            farmer.moveDown();
-        }
-        else if (keyCode == LEFT) {
-            farmer.moveLeft();
-        }
-        else if (keyCode == RIGHT) {
-            farmer.moveRight();
-        }
+            // FOR DEBUGGING
+            /* 
+            if (prevKeyCode != keyCode) {
+                prevKeyCode = keyCode;
+                println(keyCode);
+            }
+            */
+            
+            // Arrow key input for moving farmer
+            if (keyCode == UP) {
+                farmer.moveUp();
+            }
+            else if (keyCode == DOWN) {
+                farmer.moveDown();
+            }
+            else if (keyCode == LEFT) {
+                farmer.moveLeft();
+            }
+            else if (keyCode == RIGHT) {
+                farmer.moveRight();
+            }
 
-        // FOR DEBUGGING
-        /*
-        else if (keyCode == SHIFT) {
-            farmer.printPos();
+            // FOR DEBUGGING
+            /*
+            else if (keyCode == SHIFT) {
+                farmer.printPos();
+            }
+            */
         }
-        */
-    }
-    else {
+        else {
 
-        // FOR DEBUGGING
-        /*
-        if (prevKey != key) {
-            prevKey = key;
-            println(key);
-        }
-        */
+            // FOR DEBUGGING
+            /*
+            if (prevKey != key) {
+                prevKey = key;
+                println(key);
+            }
+            */
 
-        // WASD alternative input for moving farmer
-        if (key == 'w' || key == 'W') {
-            farmer.moveUp();
-        }
-        else if (key == 's' || key == 'S') {
-            farmer.moveDown();
-        }
-        else if (key == 'a' || key == 'A') {
-            farmer.moveLeft();
-        }
-        else if (key == 'd' || key == 'D') {
-            farmer.moveRight();
+            // WASD alternative input for moving farmer
+            if (key == 'w' || key == 'W') {
+                farmer.moveUp();
+            }
+            else if (key == 's' || key == 'S') {
+                farmer.moveDown();
+            }
+            else if (key == 'a' || key == 'A') {
+                farmer.moveLeft();
+            }
+            else if (key == 'd' || key == 'D') {
+                farmer.moveRight();
+            }
         }
     }
 }
