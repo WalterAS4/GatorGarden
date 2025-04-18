@@ -1,3 +1,5 @@
+import processing.sound.*;
+
 // Plant definitions
 static final int WHEAT = 1;
 static final int CORN = 2;
@@ -78,6 +80,13 @@ PImage foxWalk1, foxWalk2, foxWalk3, foxWalk4;
 PImage dirt;
 PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
 
+// SoundFile initializations
+SoundFile backgroundMusic;
+SoundFile buttonClick, gameStart, levelUp;
+SoundFile earningCoins, planting, scaring, stealing, walking;
+
+int lastStep = 0;
+
 void setup() {
     size(800,800);
     width = 800;
@@ -103,6 +112,20 @@ void setup() {
     wheat4 = loadImage("ImageFiles/Wheat4.png");
     wheat5 = loadImage("ImageFiles/Wheat5.png");
     wheat6 = loadImage("ImageFiles/Wheat6.png");
+
+    // Sound loading
+    backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
+    buttonClick = new SoundFile(this, "AudioFiles/Button Click.mp3");
+    gameStart = new SoundFile(this, "AudioFiles/Game Start.wav");
+    levelUp = new SoundFile(this, "AudioFiles/Level Up.wav");
+    earningCoins = new SoundFile(this, "AudioFiles/Earning Coins.mp3");
+    planting = new SoundFile(this, "AudioFiles/Planting.wav");
+    scaring = new SoundFile(this, "AudioFiles/Scaring Mobs.mp3");
+    stealing = new SoundFile(this, "AudioFiles/Stealing Crops.mp3");
+    walking = new SoundFile(this, "AudioFiles/Walking.mp3");
+    
+    backgroundMusic.amp(0.001);
+    backgroundMusic.loop();
 }
 
 void draw() {
@@ -164,12 +187,14 @@ void mousePressed() {
         //check if close button was clicked
         if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
             menuOpen = false;
+            buttonClick.play();
         }
-        //crops:
+        // Plant crop:
         else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
             if (farm.getMoney() >= 100) {
                 farm.plantCrop(selectedRow, selectedCol, WHEAT);
                 menuOpen = false;
+                planting.play();
             }
         }   
         //more crops:
@@ -180,13 +205,15 @@ void mousePressed() {
     if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
         farmer.speed += 1;
         farmer.upgradesAvailable -= 1;
+        buttonClick.play();
     }
     else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
         farmer.reach += 1;
         farmer.upgradesAvailable -= 1;
+        buttonClick.play();
     }
     else {
-        // Plant/Harvest Crop
+        // Harvest Crop
         for (int i = 0; i < farm.getRows(); i++) {
             for (int j = 0; j < farm.getCols(); j++) {
                 if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
@@ -198,9 +225,11 @@ void mousePressed() {
                         menuOpen = true;
                         selectedRow = i;
                         selectedCol = j;
+                        buttonClick.play();
                     }
                     else if (farm.isCropReady(i, j)) {
                         farm.harvestCrop(i,j);
+                        earningCoins.play();
                     }
 
                 }
@@ -380,6 +409,11 @@ class Farmer {
         }
         // Safe to move
         yPos = min(800, nextY);
+        // Timing of walking sound
+        if (millis() - lastStep > 500) {
+            walking.play();
+            lastStep = millis();
+        }
     }
     void moveUp() {
         int nextY = yPos - (speed + 1) * 2;
@@ -396,6 +430,11 @@ class Farmer {
         }
         // Safe to move
         yPos = max(100, nextY);
+        // Timing of walking sound
+        if (millis() - lastStep > 500) {
+            walking.play();
+            lastStep = millis();
+        }
     }
     void moveLeft() {
         int nextX = xPos - (speed + 1) * 2;
@@ -412,6 +451,11 @@ class Farmer {
         }
         // Safe to move
         xPos = max(0, nextX);
+        // Timing of walking sound
+        if (millis() - lastStep > 500) {
+            walking.play();
+            lastStep = millis();
+        }
     }
     void moveRight() {
         int nextX = xPos + (speed + 1) * 2;
@@ -428,14 +472,17 @@ class Farmer {
         }
         // Safe to move
         xPos = min(800, nextX);
+        // Timing of walking sound
+        if (millis() - lastStep > 500) {
+            walking.play();
+            lastStep = millis();
+        }
     }
 
     // FOR DEBUGGING
     void printPos() {
         println(xPos + ", " + yPos);
     }
-
-    // TODO: create functions for upgrading stats
 
     // GETTERS
     int getXPos() { return xPos; }
@@ -722,6 +769,7 @@ class Mob {
             else {
                 if (!isRetreating) { farm.xp += 50; }
                 isRetreating = true;
+                scaring.play();
             }
         }
         else {
@@ -742,6 +790,7 @@ class Mob {
                 if (currThreat <= 0) {
                     farm.destroyCrop(targetRow, targetCol);
                     isRetreating = true;
+                    stealing.play();
                 }
             }
         }
@@ -959,6 +1008,7 @@ class Farm {
             farmer.upgradesAvailable += 1;
             xpForPrevLevel = xpForNextLevel;
             xpForNextLevel *= 2;
+            levelUp.play();
         }
     }
 
