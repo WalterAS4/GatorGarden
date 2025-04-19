@@ -22,47 +22,12 @@ int width, height;
 boolean menuOpen = false;
 int selectedRow = -1;
 int selectedCol = -1;
+boolean gameMenuOpen = false;
 
 // 1 = start menu, 2 = level select, 3 = gameplay, 4 = pause menu, 4 = end menu
 int gameState = 1;
 
-void menu() {
-  if (!menuOpen) return;
-  
-  //menu
-  fill(200, 200, 200, 230);
-  stroke(0);
-  rectMode(CENTER);
-  int menuWidth = 300;
-  int menuHeight = 400;
-  rect(width/2, height/2, menuWidth, menuHeight, 10);
-  fill(0);
-  textSize(24);
-  textAlign(CENTER);
-  text("Plant Shop", width/2, height/2 - 160);
-  
-  //crops:
-  //wheat
-  fill(235, 235, 200);
-  rect(width/2, height/2 - 100, menuWidth - 40, 60, 5);
-  fill(0);
-  textAlign(LEFT);
-  textSize(18);
-  text("Wheat", width/2 - 120, height/2 - 95);
-  text("Cost: $100", width/2 - 120, height/2 - 75);
-  image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
-  
-  //more crops:
-  
-  //close button
-  fill(255, 200, 200);
-  rect(width/2, height/2 + 140, 120, 40, 10);
-  fill(0);
-  textAlign(CENTER);
-  text("Close", width/2, height/2 + 145);
-
-  textAlign(BASELINE);
-}
+boolean gamePaused = false;
 
 // Initializes a farmer, a farm, and the fox
 Farmer farmer = new Farmer();
@@ -82,7 +47,7 @@ PImage gatorWalk1, gatorWalk2, gatorWalk3, gatorWalk4;
 PImage foxWalk1, foxWalk2, foxWalk3, foxWalk4;
 PImage dirt;
 PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
-PImage backButton;
+PImage backButton, menuButton;
 
 // SoundFile initializations
 SoundFile backgroundMusic;
@@ -90,6 +55,88 @@ SoundFile buttonClick, gameStart, levelUp;
 SoundFile earningCoins, planting, scaring, stealing, walking;
 
 int lastStep = 0;
+
+void menu() {
+  if (!menuOpen) return;
+  
+  //menu
+  fill(200, 200, 200, 230);
+  stroke(0);
+  rectMode(CENTER);
+  int menuWidth = 300;
+  int menuHeight = 400;
+  rect(width/2, height/2, menuWidth, menuHeight, 10);
+  fill(0);
+  textSize(24);
+  textAlign(CENTER);
+  text("Plant Shop", width/2, height/2 - 160);
+  
+  //crops:
+  //wheat
+  fill(232, 232, 165);
+  rect(width/2, height/2 - 100, menuWidth - 40, 60, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Wheat", width/2 - 120, height/2 - 95);
+  text("Cost: $100", width/2 - 120, height/2 - 75);
+  image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
+  
+  //more crops:
+  
+  //close button
+  fill(250, 175, 175);
+  rect(width/2, height/2 + 140, 120, 40, 10);
+  fill(0);
+  textAlign(CENTER);
+  text("Close", width/2, height/2 + 145);
+
+  textAlign(BASELINE);
+}
+
+// Game Menu
+void gameMenu() {
+    if (!gameMenuOpen) return;
+
+    fill(200, 200, 200, 230);
+    stroke(0);
+    rectMode(CENTER);
+    int menuWidth = 400;
+    int menuHeight = 500;
+    rect(width/2, height/2, menuWidth, menuHeight, 10);
+    fill(0);
+    textSize(24);
+    textAlign(CENTER);
+    text("Paused", width/2, height/2 - 200);
+    
+    // Buttons
+    fill(232, 232, 165);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    resetMatrix();
+
+    textSize(20);
+    fill(0);
+    text("Resume", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Restart", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Main Menu", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Level Select", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Quit Game", width/2, height/2 - 140);
+    resetMatrix();
+
+    textAlign(BASELINE);
+}
 
 void setup() {
     size(800,800);
@@ -116,7 +163,9 @@ void setup() {
     wheat4 = loadImage("ImageFiles/Wheat4.png");
     wheat5 = loadImage("ImageFiles/Wheat5.png");
     wheat6 = loadImage("ImageFiles/Wheat6.png");
+
     backButton = loadImage("ImageFiles/Back Button.png");
+    menuButton = loadImage("ImageFiles/Menu Button.png");
 
     // Sound loading
     backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
@@ -202,10 +251,41 @@ void draw() {
         textAlign(BASELINE);
     }
     // Gameplay
-    else if (gameState == 3) {
-        farm.updateFarm();
+    else {
         farm.drawFarm();
         farmer.drawFarmer();
+        if (!gamePaused) {
+            farm.updateFarm();
+
+            // custom cursor
+            if (mouseY <= 100) {
+                cursor(ARROW);
+            }
+            else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+                cursor(CROSS);
+            }
+            else {
+                cursor(ARROW);
+            }
+
+            // mob logic
+            if (fox.isGone()) {
+                fox.updateCooldown();
+                if (fox.getCooldown() <= 0) {
+                    fox.resetMob();
+                }
+            }
+            else {
+                fox.updateMob();
+            }
+        }
+        // Keep mob drawn even when paused
+        if (!fox.isGone()) {
+            fox.drawMob();
+        }
+
+        menu();
+        gameMenu();
 
         // Button Hover
         if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
@@ -217,7 +297,7 @@ void draw() {
             text("+", 475, 40);
             strokeWeight(1.5);
         }
-        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
+        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
             strokeWeight(2);
             fill(#f5b87a);
             rect(480, 65, 40, 20, 0, 20, 20, 0);
@@ -226,39 +306,69 @@ void draw() {
             text("+", 475, 70);
             strokeWeight(1.5);
         }
-
-        // custom cursor
-        if (mouseY <= 100) {
-            cursor(ARROW);
+        else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
+            fill(#d3d3d3, 80);
+            rect(50, 50, 50, 50);
         }
-        else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-            cursor(CROSS);
-        }
-        else {
-            cursor(ARROW);
-        }
-
-        // mob logic
-        if (fox.isGone()) {
-            fox.updateCooldown();
-            if (fox.getCooldown() <= 0) {
-                fox.resetMob();
+        if (menuOpen) {
+            //crops:
+            //wheat
+            if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 - 100, 260, 60, 5);
+                fill(0);
+                textAlign(LEFT);
+                textSize(18);
+                text("Wheat", width/2 - 120, height/2 - 95);
+                text("Cost: $100", width/2 - 120, height/2 - 75);
+                image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
+                textAlign(BASELINE);
+            }
+            //close button
+            else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+                fill(255, 200, 200);
+                rect(width/2, height/2 + 140, 120, 40, 10);
+                fill(0);
+                textAlign(CENTER);
+                text("Close", width/2, height/2 + 145);
+                textAlign(BASELINE);
             }
         }
-        else {
-            fox.updateMob();
-            fox.drawMob();
+        if (gameMenuOpen) {
+            textAlign(CENTER);
+            textSize(20);
+            if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 - 140, 340, 60, 5);
+                fill(0);
+                text("Resume", width/2, height/2 - 140);
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 - 65, 340, 60, 5);
+                fill(0);
+                text("Restart", width/2, height/2 - 65);
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 + 10, 340, 60, 5);
+                fill(0);
+                text("Main Menu", width/2, height/2 + 10);
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 + 85, 340, 60, 5);
+                fill(0);
+                text("Level Select", width/2, height/2 + 85);
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 530 && mouseY <= 590) {
+                fill(235, 235, 200);
+                rect(width/2, height/2 + 160, 340, 60, 5);
+                fill(0);
+                text("Quit Game", width/2, height/2 + 160);
+            }
+            textAlign(BASELINE);
         }
-
-        menu();
-    }
-    // Pause Menu
-    else if (gameState == 4) {
-
-    }
-    // End Menu
-    else {
-
     }
 }
 
@@ -283,15 +393,15 @@ void mousePressed() {
         }
     }
     else if (gameState == 3) {
-        //for menu
-        //if menu open, handle clicks
+        // For Menu
+        // If menu open, handle clicks
         if (menuOpen) {
-            //check if close button was clicked
+            // Check if close button was clicked
             if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
                 menuOpen = false;
                 buttonClick.play();
             }
-            // Plant crop:
+            // Plant Crop:
             else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
                 if (farm.getMoney() >= 100) {
                     farm.plantCrop(selectedRow, selectedCol, WHEAT);
@@ -299,9 +409,31 @@ void mousePressed() {
                     planting.play();
                 }
             }   
-            //more crops:
+            // More Crops:
         
             return;
+        }
+
+        // For GameMenu
+        // If menu open, handle clicks
+        if (gameMenuOpen) {
+            if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
+                gameMenuOpen = false;
+                gamePaused = false;
+                buttonClick.play();
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+                //TODO: implement restarting current level
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+                gameState = 1;
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+                gameState = 2;
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 530 && mouseY <= 590) {
+                exit();
+            }
         }
 
         if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
@@ -313,6 +445,13 @@ void mousePressed() {
             farmer.reach += 1;
             farmer.upgradesAvailable -= 1;
             buttonClick.play();
+        }
+        else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
+            if (!gameMenuOpen) {
+                gameMenuOpen = true;
+                gamePaused = true;
+                buttonClick.play();
+            }
         }
         else {
             // Harvest Crop
@@ -993,7 +1132,7 @@ class Farm {
         }
 
         // tools hotbar
-        fill(120);
+        fill(150);
         rect(width/2, 50, width-10, 90);
 
         // xp meter
@@ -1010,13 +1149,13 @@ class Farm {
         // Timer
         fill(0);
         textSize(30);
-        if (timer < 100) { text("Time: 0", width-225, 60); }
-        else { text("Time: " + str(timer).substring(0, str(timer).length() - 2), width-225, 60); }
+        if (timer < 100) { text("Time: 0", width-250, 60); }
+        else { text("Time: " + str(timer).substring(0, str(timer).length() - 2), width-250, 60); }
 
         // Money
         fill(0);
         textSize(30);
-        text("Money: $" + str(money), 60, 60);
+        text("Money: $" + str(money), 100, 60);
         
         // Stats
         fill(255);
@@ -1059,6 +1198,9 @@ class Farm {
             String upgradesAvailable = "x" + str(farmer.upgradesAvailable);
             text(upgradesAvailable, 515, 55);
         }
+
+        // Game Menu Button
+        image(menuButton, 50, 50);
 
         // Level
         textSize(50);
