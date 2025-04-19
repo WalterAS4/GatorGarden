@@ -22,8 +22,9 @@ boolean menuOpen = false;
 int selectedRow = -1;
 int selectedCol = -1;
 boolean gameMenuOpen = false;
+boolean endMenuOpen = false;
 
-// 1 = start menu, 2 = level select, 3 = gameplay, 4 = pause menu, 4 = end menu
+// 1 = start menu, 2 = level select, 3 = gameplay
 int gameState = 1;
 
 boolean gamePaused = false;
@@ -242,7 +243,7 @@ void draw() {
 
             // custom cursor
               if (mouseY <= 100 || menuOpen) {
-                  cursor(ARROW);
+                cursor(ARROW);
               }
               else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20) && !menuOpen) {
                   cursor(CROSS);
@@ -317,22 +318,24 @@ void draw() {
                 dragon.updateMob();
             }
         }
-        }
-        // Keep mob drawn even when paused
-        if (!fox.isGone()) {
-            fox.drawMob();
-        }
-        if(!wolf.isGone()) {
-            wolf.drawMob();
-        }
-        if (!dragon.isGone()) {
-            dragon.drawMob();
-        }
+    }
+    // Keep mob drawn even when paused
+    if (!fox.isGone()) {
+        fox.drawMob();
+    }
+    if(!wolf.isGone()) {
+        wolf.drawMob();
+    }
+    if (!dragon.isGone()) {
+        dragon.drawMob();
+    }
 
-        menu();
-        gameMenu();
+    menu();
+    gameMenu();
+    endMenu();
 
-        // Button Hover
+    // Button Hover
+    if (gameState == 3) {
         if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
             strokeWeight(2);
             fill(#b5e0f5);
@@ -355,66 +358,97 @@ void draw() {
             fill(#d3d3d3, 80);
             rect(50, 50, 50, 50);
         }
-        // if (menuOpen) {
-        //     //crops:
-        //     //wheat
-        //     if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
-        //         fill(235, 235, 200);
-        //         rect(width/2, height/2 - 100, 260, 60, 5);
-        //         fill(0);
-        //         textAlign(LEFT);
-        //         textSize(18);
-        //         text("Wheat", width/2 - 120, height/2 - 95);
-        //         text("Cost: $100", width/2 - 120, height/2 - 75);
-        //         image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
-        //         textAlign(BASELINE);
-        //     }
-        //     //close button
-        //     else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
-        //         fill(255, 200, 200);
-        //         rect(width/2, height/2 + 140, 120, 40, 10);
-        //         fill(0);
-        //         textAlign(CENTER);
-        //         text("Close", width/2, height/2 + 145);
-        //         textAlign(BASELINE);
-        //     }
-        // }
+    }
+    // if (menuOpen) {
+    //     //crops:
+    //     //wheat
+    //     if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+    //         fill(235, 235, 200);
+    //         rect(width/2, height/2 - 100, 260, 60, 5);
+    //         fill(0);
+    //         textAlign(LEFT);
+    //         textSize(18);
+    //         text("Wheat", width/2 - 120, height/2 - 95);
+    //         text("Cost: $100", width/2 - 120, height/2 - 75);
+    //         image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
+    //         textAlign(BASELINE);
+    //     }
+    //     //close button
+    //     else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+    //         fill(255, 200, 200);
+    //         rect(width/2, height/2 + 140, 120, 40, 10);
+    //         fill(0);
+    //         textAlign(CENTER);
+    //         text("Close", width/2, height/2 + 145);
+    //         textAlign(BASELINE);
+    //     }
+    // }
 
-        if (gameMenuOpen) {
-            textAlign(CENTER);
-            textSize(20);
-            if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 - 140, 340, 60, 5);
-                fill(0);
-                text("Resume", width/2, height/2 - 140);
-            }
-            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 - 65, 340, 60, 5);
-                fill(0);
-                text("Restart", width/2, height/2 - 65);
-            }
-            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 + 10, 340, 60, 5);
-                fill(0);
-                text("Main Menu", width/2, height/2 + 10);
-            }
-            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 + 85, 340, 60, 5);
-                fill(0);
-                text("Level Select", width/2, height/2 + 85);
-            }
-            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 530 && mouseY <= 590) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 + 160, 340, 60, 5);
-                fill(0);
-                text("Quit Game", width/2, height/2 + 160);
-            }
-            textAlign(BASELINE);
+    if (gameMenuOpen) {
+        textAlign(CENTER);
+        textSize(20);
+        if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 - 140, 340, 60, 5);
+            fill(0);
+            text("Resume", width/2, height/2 - 140);
         }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 - 65, 340, 60, 5);
+            fill(0);
+            text("Restart", width/2, height/2 - 65);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 + 10, 340, 60, 5);
+            fill(0);
+            text("Main Menu", width/2, height/2 + 10);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 + 85, 340, 60, 5);
+            fill(0);
+            text("Level Select", width/2, height/2 + 85);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 530 && mouseY <= 590) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 + 160, 340, 60, 5);
+            fill(0);
+            text("Quit Game", width/2, height/2 + 160);
+        }
+        textAlign(BASELINE);
+    }
+
+    if (endMenuOpen) {
+        textAlign(CENTER);
+        textSize(20);
+        if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 - 140, 340, 60, 5);
+            fill(0);
+            text("Restart", width/2, height/2 - 140);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 - 65, 340, 60, 5);
+            fill(0);
+            text("Main Menu", width/2, height/2 - 65);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 + 10, 340, 60, 5);
+            fill(0);
+            text("Level Select", width/2, height/2 + 10);
+        }
+        else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+            fill(235, 235, 200);
+            rect(width/2, height/2 + 85, 340, 60, 5);
+            fill(0);
+            text("Quit Game", width/2, height/2 + 85);
+        textAlign(BASELINE);
+        }
+    }
 }
 
 void menu() {
@@ -586,6 +620,46 @@ void gameMenu() {
     textAlign(BASELINE);
 }
 
+// End Menu
+void endMenu() {
+    if (!endMenuOpen) return;
+
+    fill(200, 200, 200, 230);
+    stroke(0);
+    rectMode(CENTER);
+    int menuWidth = 400;
+    int menuHeight = 500;
+    rect(width/2, height/2, menuWidth, menuHeight, 10);
+    fill(0);
+    textSize(24);
+    textAlign(CENTER);
+    text("You Lost!", width/2, height/2 - 200);
+    
+    // Buttons
+    fill(232, 232, 165);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    resetMatrix();
+
+    textSize(20);
+    fill(0);
+    text("Restart", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Main Menu", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Level Select", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Quit Game", width/2, height/2 - 140);
+    resetMatrix();
+
+    textAlign(BASELINE);
+}
+
 void mousePressed() {
     if (gameState == 1) {
         if (mouseX >= 205 && mouseX <= 595 && mouseY >= 280 && mouseY <= 370) {
@@ -710,59 +784,72 @@ void mousePressed() {
             }
         }
 
-        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
-            farmer.speed += 1;
-            farmer.upgradesAvailable -= 1;
-            buttonClick.play();
-        }
-        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
-            farmer.reach += 1;
-            farmer.upgradesAvailable -= 1;
-            buttonClick.play();
-        }
-        else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
-            if (!gameMenuOpen) {
-                gameMenuOpen = true;
-                gamePaused = true;
-                buttonClick.play();
+        // For EndMenu
+        // If menu open, handle clicks
+        if (endMenuOpen) {
+            if (mouseX >= 230 && mouseX <= 570 && mouseY >= 230 && mouseY <= 290) {
+                endMenuOpen = false;
+                menuOpen = false;
+                //TODO: implement restarting current level
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+                endMenuOpen = false;
+                menuOpen = false;
+                gameState = 1;
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+                endMenuOpen = false;
+                menuOpen = false;
+                gameState = 2;
+            }
+            else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+                exit();
             }
         }
-        else {
-            // Plant/Harvest Crop
-            for (int i = 0; i < farm.getRows(); i++) {
-                for (int j = 0; j < farm.getCols(); j++) {
-                    if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-                        // if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
-                        //     farm.plantCrop(i, j, WHEAT);
-                        // }
-                        //check if plot empty to show menu
-                        if (farm.getCropType(i, j) == 0) {
-                            menuOpen = true;
-                            selectedRow = i;
-                            selectedCol = j;
-                            buttonClick.play();
-                        }
-                        else if (farm.isCropReady(i, j)) {
-                            farm.harvestCrop(i,j);
-                            earningCoins.play();
-                        }
 
+        if (!gamePaused) {
+            if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
+                farmer.speed += 1;
+                farmer.upgradesAvailable -= 1;
+                buttonClick.play();
+            }
+            else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
+                farmer.reach += 1;
+                farmer.upgradesAvailable -= 1;
+                buttonClick.play();
+            }
+            else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
+                if (!gameMenuOpen) {
+                    gameMenuOpen = true;
+                    gamePaused = true;
+                    buttonClick.play();
+                }
+            }
+            else {
+                // Plant/Harvest Crop
+                for (int i = 0; i < farm.getRows(); i++) {
+                    for (int j = 0; j < farm.getCols(); j++) {
+                        if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+                            // if (farm.getCropType(i, j) == 0 && farm.getMoney() >= 100) {
+                            //     farm.plantCrop(i, j, WHEAT);
+                            // }
+                            //check if plot empty to show menu
+                            if (farm.getCropType(i, j) == 0) {
+                                menuOpen = true;
+                                selectedRow = i;
+                                selectedCol = j;
+                                buttonClick.play();
+                            }
+                            else if (farm.isCropReady(i, j)) {
+                                farm.harvestCrop(i,j);
+                                earningCoins.play();
+                            }
+
+                        }
                     }
                 }
             }
         }
-
-        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
-            farmer.speed += 1;
-            farmer.upgradesAvailable -= 1;
-            buttonClick.play();
-        }
-        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
-            farmer.reach += 1;
-            farmer.upgradesAvailable -= 1;
-            buttonClick.play();
-        }
-        
     }
 }
 
