@@ -3,13 +3,12 @@ import processing.sound.*;
 // Plant definitions
 static final int WHEAT = 1;
 static final int CORN = 2;
-static final int THREE = 3;
-static final int FOUR = 4;
-static final int FIVE = 5;
-static final int SIX = 6;
-static final int SEVEN = 7;
-static final int EIGHT = 8;
-static final int NINE = 9;
+static final int BLUEBERRY = 3;
+static final int CHILIPEPPER = 4;
+static final int STRAWBERRY = 5;
+static final int BELLPEPPER = 6;
+static final int SUGARCANE = 7;
+static final int APPLETREE = 8;
 
 // Enemy definitions
 static final int FOX = 1;
@@ -33,8 +32,8 @@ boolean gamePaused = false;
 Farmer farmer = new Farmer();
 Farm farm = new Farm(6, 5, 100);
 Mob fox = new Mob(FOX);
-// Mob wolf = new Mob(WOLF);
-// Mob dragon = new Mob(DRAGON);
+Mob wolf = new Mob(WOLF);
+Mob dragon = new Mob(DRAGON);
 
 // FOR DEBUGGING
 int prevKeyCode = 0;
@@ -45,8 +44,17 @@ int timer = 0;
 // PImage initializations
 PImage gatorWalk1, gatorWalk2, gatorWalk3, gatorWalk4;
 PImage foxWalk1, foxWalk2, foxWalk3, foxWalk4;
+PImage wolfWalk1, wolfWalk2, wolfWalk3, wolfWalk4;
+PImage dragonWalk1, dragonWalk2, dragonWalk3, dragonWalk4;
 PImage dirt;
-PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6;
+PImage wheat1, wheat2, wheat3, wheat4, wheat5, wheat6, wheatIcon;
+PImage corn1, corn2, corn3, corn4, corn5, corn6, cornIcon;
+PImage blueberry1, blueberry2, blueberry3, blueberry4, blueberry5, blueberry6, blueberryIcon;
+PImage chilipepper1, chilipepper2, chilipepper3, chilipepper4, chilipepper5, chilipepper6, chilipepperIcon;
+PImage strawberry1, strawberry2, strawberry3, strawberry4, strawberry5, strawberry6, strawberryIcon;
+PImage bellpepper1, bellpepper2, bellpepper3, bellpepper4, bellpepper5, bellpepper6, bellpepperIcon;
+PImage sugarcane1, sugarcane2, sugarcane3, sugarcane4, sugarcane5, sugarcane6, sugarcaneIcon;
+PImage appletree1, appletree2, appletree3, appletree4, appletree5, appletree6, appletreeIcon;
 PImage backButton, menuButton;
 
 // SoundFile initializations
@@ -155,7 +163,14 @@ void setup() {
     foxWalk2 = loadImage("ImageFiles/Fox2.png");
     foxWalk3 = loadImage("ImageFiles/Fox3.png");
     foxWalk4 = loadImage("ImageFiles/Fox4.png");
-    // TODO: more mobs
+    wolfWalk1 = loadImage("ImageFiles/Wolf1.png");
+    wolfWalk2 = loadImage("ImageFiles/Wolf2.png");
+    wolfWalk3 = loadImage("ImageFiles/Wolf3.png");
+    wolfWalk4 = loadImage("ImageFiles/Wolf4.png");
+    dragonWalk1 = loadImage("ImageFiles/Dragon1.png");
+    dragonWalk2 = loadImage("ImageFiles/Dragon2.png");
+    dragonWalk3 = loadImage("ImageFiles/Dragon3.png");
+    dragonWalk4 = loadImage("ImageFiles/Dragon4.png");
     dirt = loadImage("ImageFiles/Dirt.png");
     wheat1 = loadImage("ImageFiles/Wheat1.png");
     wheat2 = loadImage("ImageFiles/Wheat2.png");
@@ -163,6 +178,56 @@ void setup() {
     wheat4 = loadImage("ImageFiles/Wheat4.png");
     wheat5 = loadImage("ImageFiles/Wheat5.png");
     wheat6 = loadImage("ImageFiles/Wheat6.png");
+    wheatIcon = loadImage("ImageFiles/WheatIcon.png");
+    corn1 = loadImage("ImageFiles/Corn1.png");
+    corn2 = loadImage("ImageFiles/Corn2.png");
+    corn3 = loadImage("ImageFiles/Corn3.png");
+    corn4 = loadImage("ImageFiles/Corn4.png");
+    corn5 = loadImage("ImageFiles/Corn5.png");
+    corn6 = loadImage("ImageFiles/Corn6.png");
+    cornIcon = loadImage("ImageFiles/CornIcon.png");
+    blueberry1 = loadImage("ImageFiles/Blueberry1.png");
+    blueberry2 = loadImage("ImageFiles/Blueberry2.png");
+    blueberry3 = loadImage("ImageFiles/Blueberry3.png");
+    blueberry4 = loadImage("ImageFiles/Blueberry4.png");
+    blueberry5 = loadImage("ImageFiles/Blueberry5.png");
+    blueberry6 = loadImage("ImageFiles/Blueberry6.png");
+    blueberryIcon = loadImage("ImageFiles/BlueberryIcon.png");
+    chilipepper1 = loadImage("ImageFiles/Pepper1.png");
+    chilipepper2 = loadImage("ImageFiles/Pepper2.png");
+    chilipepper3 = loadImage("ImageFiles/Pepper3.png");
+    chilipepper4 = loadImage("ImageFiles/Pepper4.png");
+    chilipepper5 = loadImage("ImageFiles/Pepper5.png");
+    chilipepper6 = loadImage("ImageFiles/Pepper6.png");
+    chilipepperIcon = loadImage("ImageFiles/PepperIcon.png");
+    strawberry1 = loadImage("ImageFiles/Strawberry1.png");
+    strawberry2 = loadImage("ImageFiles/Strawberry2.png");
+    strawberry3 = loadImage("ImageFiles/Strawberry3.png");
+    strawberry4 = loadImage("ImageFiles/Strawberry4.png");
+    strawberry5 = loadImage("ImageFiles/Strawberry5.png");
+    strawberry6 = loadImage("ImageFiles/Strawberry6.png");
+    strawberryIcon = loadImage("ImageFiles/StrawberryIcon.png");
+    bellpepper1 = loadImage("ImageFiles/BellPepper1.png");
+    bellpepper2 = loadImage("ImageFiles/BellPepper2.png");
+    bellpepper3 = loadImage("ImageFiles/BellPepper3.png");
+    bellpepper4 = loadImage("ImageFiles/BellPepper4.png");
+    bellpepper5 = loadImage("ImageFiles/BellPepper5.png");
+    bellpepper6 = loadImage("ImageFiles/BellPepper6.png");
+    bellpepperIcon = loadImage("ImageFiles/BellPepperIcon.png");
+    sugarcane1 = loadImage("ImageFiles/SugarCane1.png");
+    sugarcane2 = loadImage("ImageFiles/SugarCane2.png");
+    sugarcane3 = loadImage("ImageFiles/SugarCane3.png");
+    sugarcane4 = loadImage("ImageFiles/SugarCane4.png");
+    sugarcane5 = loadImage("ImageFiles/SugarCane5.png");
+    sugarcane6 = loadImage("ImageFiles/SugarCane6.png");
+    sugarcaneIcon = loadImage("ImageFiles/SugarCaneIcon.png");
+    appletree1 = loadImage("ImageFiles/Tree1.png");
+    appletree2 = loadImage("ImageFiles/Tree2.png");
+    appletree3 = loadImage("ImageFiles/Tree3.png");
+    appletree4 = loadImage("ImageFiles/Tree4.png");
+    appletree5 = loadImage("ImageFiles/Tree5.png");
+    appletree6 = loadImage("ImageFiles/Tree6.png");
+    appletreeIcon = loadImage("ImageFiles/AppleIcon.png");
 
     backButton = loadImage("ImageFiles/Back Button.png");
     menuButton = loadImage("ImageFiles/Menu Button.png");
@@ -258,15 +323,49 @@ void draw() {
             farm.updateFarm();
 
             // custom cursor
-            if (mouseY <= 100) {
-                cursor(ARROW);
-            }
-            else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
-                cursor(CROSS);
-            }
-            else {
-                cursor(ARROW);
-            }
+              if (mouseY <= 100 || menuOpen) {
+                  cursor(ARROW);
+              }
+              else if ((abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20) && !menuOpen) {
+                  cursor(CROSS);
+                  for (int i = 0; i < farm.getRows(); i++) {
+                      for (int j = 0; j < farm.getCols(); j++) {
+                          if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+                              //check if plot empty to show menu
+                              if (farm.getCropType(i, j) != 0 && farm.isCropReady(i, j)) {
+                                  noCursor();
+                                  if (farm.getCropType(i, j) == WHEAT) {
+                                      image(wheatIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == CORN) {
+                                      image(cornIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == BLUEBERRY) {
+                                      image(blueberryIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == CHILIPEPPER) {
+                                      image(chilipepperIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == STRAWBERRY) {
+                                      image(strawberryIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == BELLPEPPER) {
+                                      image(bellpepperIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == SUGARCANE) {
+                                      image(sugarcaneIcon, mouseX, mouseY, 32, 32);
+                                  }
+                                  if (farm.getCropType(i, j) == APPLETREE) {
+                                      image(appletreeIcon, mouseX, mouseY, 32, 32);
+                                  }
+                              }
+                          }
+                      }
+                  }
+              }
+              else {
+                  cursor(ARROW);
+              }
 
             // mob logic
             if (fox.isGone()) {
@@ -278,10 +377,38 @@ void draw() {
             else {
                 fox.updateMob();
             }
+            // wolf mob logic
+            if (wolf.isGone()) {
+                wolf.updateCooldown();
+                if (wolf.getCooldown() <= 0) {
+                    wolf.resetMob();
+                }
+            }
+            else {
+                wolf.updateMob();
+            }
+
+            // dragon mob logic
+            if (dragon.isGone()) {
+                dragon.updateCooldown();
+                if (dragon.getCooldown() <= 0) {
+                    dragon.resetMob();
+                }
+            }
+            else {
+                dragon.updateMob();
+            }
+        }
         }
         // Keep mob drawn even when paused
         if (!fox.isGone()) {
             fox.drawMob();
+        }
+        if(!wolf.isGone()) {
+            wolf.drawMob();
+        }
+        if (!dragon.isGone()) {
+            dragon.drawMob();
         }
 
         menu();
@@ -332,8 +459,6 @@ void draw() {
                 textAlign(CENTER);
                 text("Close", width/2, height/2 + 145);
                 textAlign(BASELINE);
-            }
-        }
         if (gameMenuOpen) {
             textAlign(CENTER);
             textSize(20);
@@ -369,7 +494,131 @@ void draw() {
             }
             textAlign(BASELINE);
         }
-    }
+}
+
+void menu() {
+  if (!menuOpen) return;
+  
+  //menu
+  fill(200, 200, 200, 230);
+  stroke(0);
+  rectMode(CENTER);
+  int menuWidth = 300;
+  int menuHeight = 500;
+  rect(width/2, height/2+50, menuWidth, menuHeight, 10);
+  fill(0);
+  textSize(24);
+  textAlign(CENTER);
+  text("Plant Shop", width/2, height/2 - 160);
+  
+  //crops:
+  //wheat
+  fill(235, 235, 200);
+  rect(width/2, height/2 - 130, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Wheat", width/2 - 120, height/2 - 131);
+  if (farm.money < 100) { fill(255, 0, 0); }
+  text("Cost: $100", width/2 - 120, height/2 - 113);
+  image(wheatIcon, width/2 + 100, height/2 - 128, 32, 32);
+  
+  //corn
+  fill(235, 235, 200);
+  rect(width/2, height/2 - 85, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Corn", width/2 - 120, height/2 - 86);
+  if (farm.money < 200) { fill(255, 0, 0); }
+  text("Cost: $200", width/2 - 120, height/2 - 68);
+  image(cornIcon, width/2 + 100, height/2 - 83, 32, 32);
+  
+  //blueberry
+  fill(235, 235, 200);
+  rect(width/2, height/2 - 40, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Blueberry", width/2 - 120, height/2 - 41);
+  if (farm.money < 400) { fill(255, 0, 0); }
+  text("Cost: $400", width/2 - 120, height/2 - 23);
+  image(blueberryIcon, width/2 + 100, height/2 - 38, 32, 32);
+
+  //chilipepper
+  fill(235, 235, 200);
+  rect(width/2, height/2 + 5, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Chili Pepper", width/2 - 120, height/2 + 4);
+  if (farm.money < 800) { fill(255, 0, 0); }
+  text("Cost: $800", width/2 - 120, height/2 + 22);
+  image(chilipepperIcon, width/2 + 100, height/2 + 7, 32, 32);
+
+  //strawberry
+  fill(235, 235, 200);
+  rect(width/2, height/2 + 50, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Strawberry", width/2 - 120, height/2 + 49);
+  if (farm.money < 1600) { fill(255, 0, 0); }
+  text("Cost: $1600", width/2 - 120, height/2 + 67);
+  image(strawberryIcon, width/2 + 100, height/2 + 52, 32, 32);
+
+  //bellpepper
+  fill(235, 235, 200);
+  rect(width/2, height/2 + 95, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Bell Pepper", width/2 - 120, height/2 + 94);
+  if (farm.money < 3200) { fill(255, 0, 0); }
+  text("Cost: $3200", width/2 - 120, height/2 +112);
+  image(bellpepperIcon, width/2 + 100, height/2 + 97, 32, 32);
+
+  //sugarcane
+  fill(235, 235, 200);
+  rect(width/2, height/2 + 140, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Sugar Cane", width/2 - 120, height/2 + 139);
+  if (farm.money < 6400) { fill(255, 0, 0); }
+  text("Cost: $6400", width/2 - 120, height/2 + 157);
+  image(sugarcaneIcon, width/2 + 100, height/2 + 142, 32, 32);
+
+  //apple
+  fill(235, 235, 200);
+  rect(width/2, height/2 + 185, menuWidth - 40, 40, 5);
+  fill(0);
+  textAlign(LEFT);
+  textSize(18);
+  text("Apple Tree", width/2 - 120, height/2 + 184);
+  if (farm.money < 12800) { fill(255, 0, 0); }
+  text("Cost: $12800", width/2 - 120, height/2 + 202);
+  image(appletreeIcon, width/2 + 100, height/2 + 187, 32, 32);
+
+  for (int i = 0; i < abs(farm.level-8) && farm.level < 9; i++) {
+    fill(110);
+    rect(width/2, height/2 + 185 - i*45, menuWidth - 40, 40, 5);
+    fill(190);
+    rect(width/2, height/2 + 185 - i*45, 15, 20, 7);
+    fill(110);
+    rect(width/2, height/2 + 185 - i*45, 7, 12, 3);
+    fill(135, 118, 39);
+    rect(width/2, height/2 + 195 - i*45, 20, 15);
+  }
+  
+  //close button
+  fill(255, 200, 200);
+  rect(width/2, height/2 + 240, 120, 40, 10);
+  fill(0);
+  textAlign(CENTER);
+  text("Close", width/2, height/2 + 245);
+
+  textAlign(BASELINE);
 }
 
 void mousePressed() {
@@ -397,22 +646,74 @@ void mousePressed() {
         // If menu open, handle clicks
         if (menuOpen) {
             // Check if close button was clicked
-            if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+            if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 220 && mouseY < height/2 + 260) {
                 menuOpen = false;
                 buttonClick.play();
             }
-            // Plant Crop:
-            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+            //wheat
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 150 && mouseY < height/2 - 110) {
                 if (farm.getMoney() >= 100) {
                     farm.plantCrop(selectedRow, selectedCol, WHEAT);
                     menuOpen = false;
                     planting.play();
                 }
-            }   
-            // More Crops:
-        
-            return;
-        }
+            }
+            //corn
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 105 && mouseY < height/2 - 65) {
+                if (farm.getMoney() >= 200 && farm.level >= CORN) {
+                    farm.plantCrop(selectedRow, selectedCol, CORN);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //blueberry
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 60 && mouseY < height/2 - 20) {
+                if (farm.getMoney() >= 400 && farm.level >= BLUEBERRY) {
+                    farm.plantCrop(selectedRow, selectedCol, BLUEBERRY);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //chili pepper
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 15 && mouseY < height/2 + 25) {
+                if (farm.getMoney() >= 800 && farm.level >= CHILIPEPPER) {
+                    farm.plantCrop(selectedRow, selectedCol, CHILIPEPPER);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //strawberry
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 + 30 && mouseY < height/2 + 70) {
+                if (farm.getMoney() >= 1600 && farm.level >= STRAWBERRY) {
+                    farm.plantCrop(selectedRow, selectedCol, STRAWBERRY);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //bell pepper
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 + 75 && mouseY < height/2 + 115) {
+                if (farm.getMoney() >= 3200 && farm.level >= BELLPEPPER) {
+                    farm.plantCrop(selectedRow, selectedCol, BELLPEPPER);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //sugar cane
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+                if (farm.getMoney() >= 6400 && farm.level >= SUGARCANE) {
+                    farm.plantCrop(selectedRow, selectedCol, SUGARCANE);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
+            //apple tree
+            else if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 + 165 && mouseY < height/2 + 205) {
+                if (farm.getMoney() >= 12800 && farm.level >= APPLETREE) {
+                    farm.plantCrop(selectedRow, selectedCol, APPLETREE);
+                    menuOpen = false;
+                    planting.play();
+                }
+            }
 
         // For GameMenu
         // If menu open, handle clicks
@@ -454,7 +755,7 @@ void mousePressed() {
             }
         }
         else {
-            // Harvest Crop
+            // Plant/Harvest Crop
             for (int i = 0; i < farm.getRows(); i++) {
                 for (int j = 0; j < farm.getCols(); j++) {
                     if (mouseX >= i*100+110 && mouseX <= i*100+190 && mouseY >= j*100+210 && mouseY <= j*100+290 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
@@ -477,6 +778,18 @@ void mousePressed() {
                 }
             }
         }
+
+        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45 && farmer.upgradesAvailable > 0) {
+            farmer.speed += 1;
+            farmer.upgradesAvailable -= 1;
+            buttonClick.play();
+        }
+        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75 && farmer.upgradesAvailable > 0) {
+            farmer.reach += 1;
+            farmer.upgradesAvailable -= 1;
+            buttonClick.play();
+        }
+        
     }
 }
 
@@ -540,47 +853,12 @@ void keyPressed() {
     }
 }
 
-// TODO: Implement more functions to draw each kind of plant
 
-// Draws wheat based on its age
-void drawWheat(int x, int y, int age) {
-    if (age < 20) {
-        image(wheat1, x-15, y-15, 64, 64);
-        image(wheat1, x-15, y+15, 64, 64);
-        image(wheat1, x+15, y+15, 64, 64);
-        image(wheat1, x+15, y-15, 64, 64);
-    }
-    else if (age < 40) {
-        image(wheat2, x-15, y-15, 64, 64);
-        image(wheat2, x-15, y+15, 64, 64);
-        image(wheat2, x+15, y+15, 64, 64);
-        image(wheat2, x+15, y-15, 64, 64);
-    }
-    else if (age < 60) {
-        image(wheat3, x-15, y-15, 64, 64);
-        image(wheat3, x-15, y+15, 64, 64);
-        image(wheat3, x+15, y+15, 64, 64);
-        image(wheat3, x+15, y-15, 64, 64);
-    }
-    else if (age < 80) {
-        image(wheat4, x-15, y-15, 64, 64);
-        image(wheat4, x-15, y+15, 64, 64);
-        image(wheat4, x+15, y+15, 64, 64);
-        image(wheat4, x+15, y-15, 64, 64);
-    }
-    else if (age < 100) {
-        image(wheat5, x-15, y-15, 64, 64);
-        image(wheat5, x-15, y+15, 64, 64);
-        image(wheat5, x+15, y+15, 64, 64);
-        image(wheat5, x+15, y-15, 64, 64);
-    }
-    else {
-        image(wheat6, x-15, y-15, 64, 64);
-        image(wheat6, x-15, y+15, 64, 64);
-        image(wheat6, x+15, y+15, 64, 64);
-        image(wheat6, x+15, y-15, 64, 64);
-    }
-}
+// -----------------------------------------------------------------------------------------
+// 
+//                           CLASS FUNCTIONS AND DEFINITIONS
+//
+// -----------------------------------------------------------------------------------------
 
 // Class used to represent the player's character
 class Farmer {
@@ -757,10 +1035,10 @@ class Mob {
             cooldown = 1000;
         }
         else if (mob == WOLF) {
-            cooldown = 1000;
+            cooldown = 750;
         }
         else if (mob == DRAGON) {
-            cooldown = 1000;
+            cooldown = 500;
         }
         else {
             cooldown = 0;
@@ -778,20 +1056,26 @@ class Mob {
             fullFear = 50;
             currFear = 0;
             speed = 1;
+            if (farm.level > 1) { speed = 2; }
+            if (farm.level > 2) { speed = 3; }
         }
         else if (mob == WOLF) {
             fullThreat = 60;
             currThreat = 60;
-            fullFear = 50;
+            fullFear = 150;
             currFear = 0;
             speed = 1;
+            if (farm.level > 4) { fullFear = 200; }
+            if (farm.level > 5) { fullFear = 250; }
         }
         else if (mob == DRAGON) {
-            fullThreat = 60;
-            currThreat = 60;
-            fullFear = 50;
+            fullThreat = 50;
+            currThreat = 50;
+            fullFear = 100;
             currFear = 0;
-            speed = 1;
+            speed = 2;
+            if (farm.level > 6) { fullThreat = 40; currThreat = 40; }
+            if (farm.level > 7) { fullThreat = 30; currThreat = 30; }
         }
         else {
             fullThreat = 0;
@@ -857,10 +1141,10 @@ class Mob {
                         cooldown = 1000;
                     }
                     if (mob == WOLF) {
-                        cooldown = 1000;
+                        cooldown = 750;
                     }
                     if (mob == DRAGON) {
-                        cooldown = 1000;
+                        cooldown = 500;
                     }
                 }
             }
@@ -869,14 +1153,13 @@ class Mob {
 
     void updateCooldown() {
         if (cooldown > 0) {
-            cooldown--;
+            if (mob == FOX || (mob == WOLF && farm.level > 3) || (mob == DRAGON && farm.level > 6)) {
+                cooldown--;
+            }
         }
     }
 
     void drawMob() {
-        // fill(60, 105, 66);
-        // rect(xPos, yPos, 16, 16);
-
         if (mob == FOX) {
             if (walkCycle == 1) {
                 image(foxWalk1, xPos, yPos-10, 32, 32);
@@ -903,16 +1186,68 @@ class Mob {
                 }
             }
         }
+        else if (mob == WOLF) {
+            if (walkCycle == 1) {
+                image(wolfWalk1, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 2;
+                }
+            }
+            else if (walkCycle == 2) {
+                image(wolfWalk2, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 3;
+                }
+            }
+            else if (walkCycle == 3) {
+                image(wolfWalk3, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 4;
+                }
+            }
+            else if (walkCycle == 4) {
+                image(wolfWalk4, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 1;
+                }
+            }
+        }
+        else if (mob == DRAGON) {
+            if (walkCycle == 1) {
+                image(dragonWalk1, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 2;
+                }
+            }
+            else if (walkCycle == 2) {
+                image(dragonWalk2, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 3;
+                }
+            }
+            else if (walkCycle == 3) {
+                image(dragonWalk3, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 4;
+                }
+            }
+            else if (walkCycle == 4) {
+                image(dragonWalk4, xPos, yPos-10, 32, 32);
+                if (timer % 20 == 0) {
+                    walkCycle = 1;
+                }
+            }
+        }
 
         // fear meter
         if (currFear > 0) {
             fill(255,255,0);
             noStroke();
             rectMode(CORNERS);
-            rect(xPos-fullFear/4, yPos-20, xPos-fullFear/4+currFear/2, yPos-25);
+            rect(xPos-20, yPos-20, xPos-20+40*currFear/fullFear, yPos-25);
             noFill();
             stroke(0);
-            rect(xPos-fullFear/4, yPos-20, xPos+fullFear/4, yPos-25);
+            rect(xPos-20, yPos-20, xPos+20, yPos-25);
             rectMode(CENTER);
         }
 
@@ -931,47 +1266,82 @@ class Mob {
         }
     }
 
-    // TODO: Create function that calculates a path for the mob to take
     void updateMob() {
         if (!isRetreating) {
             if (xPos < 100) {
                 xPos += speed;
+                if (xPos > 100) {
+                    xPos = 100;
+                }
             }
             else if (xPos > width-100) {
                 xPos -= speed;
+                if (xPos < width-100) {
+                    xPos = width-100;
+                }
             }
             else if (yPos < 200) {
                 yPos += speed;
+                if (yPos > 200) {
+                    yPos = 200;
+                }
             }
             else if (yPos > height-100) {
                 yPos -= speed;
+                if (yPos < height-100) {
+                    yPos = height-100;
+                }
             }
             else if (prefersX) {
                 if (xPos < targetRow*100+108) {
                     xPos += speed;
+                    if (xPos > targetRow*100+108) {
+                        xPos = targetRow*100+108;
+                    }
                 }
                 else if (xPos > targetRow*100+192) {
                     xPos -= speed;
+                    if (xPos < targetRow*100+192) {
+                        xPos = targetRow*100+192;
+                    }
                 }
                 else if (yPos < targetCol*100+208) {
                     yPos += speed;
+                    if (yPos > targetCol*100+208) {
+                        yPos = targetCol*100+208;
+                    }
                 }
                 else if (yPos > targetCol*100+292) {
                     yPos -= speed;
+                    if (yPos < targetCol*100+192) {
+                        yPos = targetCol*100+192;
+                    }
                 }
             }
             else {
                 if (yPos < targetCol*100+208) {
                     yPos += speed;
+                    if (yPos > targetCol*100+208) {
+                        yPos = targetCol*100+208;
+                    }
                 }
                 else if (yPos > targetCol*100+292) {
                     yPos -= speed;
+                    if (yPos < targetCol*100+292) {
+                        yPos = targetCol*100+292;
+                    }
                 }
                 else if (xPos < targetRow*100+108) {
                     xPos += speed;
+                    if (xPos > targetRow*100+108) {
+                        xPos = targetRow*100+108;
+                    }
                 }
                 else if (xPos > targetRow*100+192) {
                     xPos -= speed;
+                    if (xPos < targetRow*100+192) {
+                        xPos = targetRow*100+192;
+                    }
                 }
             }
         }
@@ -1005,14 +1375,24 @@ class Mob {
         }
 
         // fear meter
-        if (mouseX >= xPos-10 && mouseX <= xPos+10 && mouseY >= yPos-10 && mouseY <= yPos+10 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
+        if (mouseX >= xPos-30 && mouseX <= xPos+30 && mouseY >= yPos-30 && mouseY <= yPos+30 && (abs(farmer.xPos - mouseX) <= farmer.reach*30 + 20) && (abs(farmer.yPos - mouseY) <= farmer.reach*30 + 20)) {
             if (currFear < fullFear) {
                 currFear++;
             }
             else {
-                if (!isRetreating) { farm.xp += 50; }
+                if (!isRetreating) { 
+                    if (mob == FOX) {
+                        farm.xp += 50; 
+                    }
+                    else if (mob == WOLF) {
+                        farm.xp += 200;
+                    }
+                    else if(mob == DRAGON) {
+                        farm.xp += 800;
+                    }
+                    scaring.play();
+                }
                 isRetreating = true;
-                scaring.play();
             }
         }
         else {
@@ -1128,6 +1508,27 @@ class Farm {
                 if (plots[i][j].getPlant() == WHEAT) {
                     drawWheat(i*100+150, j*100+250, plots[i][j].getAge());
                 }
+                if (plots[i][j].getPlant() == CORN) {
+                    drawCorn(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == BLUEBERRY) {
+                    drawBlueberry(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == CHILIPEPPER) {
+                    drawChiliPepper(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == STRAWBERRY) {
+                    drawStrawberry(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == BELLPEPPER) {
+                    drawBellPepper(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == SUGARCANE) {
+                    drawSugarCane(i*100+150, j*100+250, plots[i][j].getAge());
+                }
+                if (plots[i][j].getPlant() == APPLETREE) {
+                    drawAppleTree(i*100+150, j*100+250, plots[i][j].getAge());
+                }
             }
         }
 
@@ -1223,13 +1624,62 @@ class Farm {
     // plants a crop of a specified type on the Plot of the given coordinate
     void plantCrop(int row, int col, int plant) {
         plots[row][col].setPlant(plant);
+        plots[row][col].setAge(0);
         if (plant == WHEAT) {
-            plots[row][col].setAge(0);
             plots[row][col].setLifespan(100);
             plots[row][col].setCost(100);
             plots[row][col].setSell(200);
-            plots[row][col].setXpval(100);
+            plots[row][col].setXpval(50);
             money = money - 100;
+        }   
+        if (plant == CORN) {
+            plots[row][col].setLifespan(175);
+            plots[row][col].setCost(200);
+            plots[row][col].setSell(400);
+            plots[row][col].setXpval(100);
+            money = money - 200;
+        }
+        if (plant == BLUEBERRY) {
+            plots[row][col].setLifespan(300);
+            plots[row][col].setCost(400);
+            plots[row][col].setSell(800);
+            plots[row][col].setXpval(200);
+            money = money - 400;
+        }
+        if (plant == CHILIPEPPER) {
+            plots[row][col].setLifespan(50);
+            plots[row][col].setCost(800);
+            plots[row][col].setSell(900);
+            plots[row][col].setXpval(35);
+            money = money - 800;
+        }
+        if (plant == STRAWBERRY) {
+            plots[row][col].setLifespan(400);
+            plots[row][col].setCost(1600);
+            plots[row][col].setSell(3200);
+            plots[row][col].setXpval(300);
+            money = money - 1600;
+        }
+        if (plant == BELLPEPPER) {
+            plots[row][col].setLifespan(500);
+            plots[row][col].setCost(3200);
+            plots[row][col].setSell(6400);
+            plots[row][col].setXpval(400);
+            money = money - 3200;
+        }
+        if (plant == SUGARCANE) {
+            plots[row][col].setLifespan(600);
+            plots[row][col].setCost(6400);
+            plots[row][col].setSell(12800);
+            plots[row][col].setXpval(600);
+            money = money - 6400;
+        }
+        if (plant == APPLETREE) {
+            plots[row][col].setLifespan(1000);
+            plots[row][col].setCost(12800);
+            plots[row][col].setSell(25600);
+            plots[row][col].setXpval(2000);
+            money = money - 12800;
         }
     }
 
@@ -1267,3 +1717,310 @@ class Farm {
 }
 
 
+// -----------------------------------------------------------------------------------------
+// 
+//                           THE GREAT WALL OF DRAW FUNCTIONS
+//
+// -----------------------------------------------------------------------------------------
+
+// Draws wheat based on its age
+void drawWheat(int x, int y, int age) {
+    if (age < 20) {
+        image(wheat1, x-15, y-15, 64, 64);
+        image(wheat1, x-15, y+15, 64, 64);
+        image(wheat1, x+15, y+15, 64, 64);
+        image(wheat1, x+15, y-15, 64, 64);
+    }
+    else if (age < 40) {
+        image(wheat2, x-15, y-15, 64, 64);
+        image(wheat2, x-15, y+15, 64, 64);
+        image(wheat2, x+15, y+15, 64, 64);
+        image(wheat2, x+15, y-15, 64, 64);
+    }
+    else if (age < 60) {
+        image(wheat3, x-15, y-15, 64, 64);
+        image(wheat3, x-15, y+15, 64, 64);
+        image(wheat3, x+15, y+15, 64, 64);
+        image(wheat3, x+15, y-15, 64, 64);
+    }
+    else if (age < 80) {
+        image(wheat4, x-15, y-15, 64, 64);
+        image(wheat4, x-15, y+15, 64, 64);
+        image(wheat4, x+15, y+15, 64, 64);
+        image(wheat4, x+15, y-15, 64, 64);
+    }
+    else if (age < 100) {
+        image(wheat5, x-15, y-15, 64, 64);
+        image(wheat5, x-15, y+15, 64, 64);
+        image(wheat5, x+15, y+15, 64, 64);
+        image(wheat5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(wheat6, x-15, y-15, 64, 64);
+        image(wheat6, x-15, y+15, 64, 64);
+        image(wheat6, x+15, y+15, 64, 64);
+        image(wheat6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws corn based on its age
+void drawCorn(int x, int y, int age) {
+    if (age < 35) {
+        image(corn1, x-15, y-15, 64, 64);
+        image(corn1, x-15, y+15, 64, 64);
+        image(corn1, x+15, y+15, 64, 64);
+        image(corn1, x+15, y-15, 64, 64);
+    }
+    else if (age < 70) {
+        image(corn2, x-15, y-15, 64, 64);
+        image(corn2, x-15, y+15, 64, 64);
+        image(corn2, x+15, y+15, 64, 64);
+        image(corn2, x+15, y-15, 64, 64);
+    }
+    else if (age < 105) {
+        image(corn3, x-15, y-15, 64, 64);
+        image(corn3, x-15, y+15, 64, 64);
+        image(corn3, x+15, y+15, 64, 64);
+        image(corn3, x+15, y-15, 64, 64);
+    }
+    else if (age < 140) {
+        image(corn4, x-15, y-15, 64, 64);
+        image(corn4, x-15, y+15, 64, 64);
+        image(corn4, x+15, y+15, 64, 64);
+        image(corn4, x+15, y-15, 64, 64);
+    }
+    else if (age < 175) {
+        image(corn5, x-15, y-15, 64, 64);
+        image(corn5, x-15, y+15, 64, 64);
+        image(corn5, x+15, y+15, 64, 64);
+        image(corn5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(corn6, x-15, y-15, 64, 64);
+        image(corn6, x-15, y+15, 64, 64);
+        image(corn6, x+15, y+15, 64, 64);
+        image(corn6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws blueberry based on its age
+void drawBlueberry(int x, int y, int age) {
+    if (age < 60) {
+        image(blueberry1, x-15, y-15, 64, 64);
+        image(blueberry1, x-15, y+15, 64, 64);
+        image(blueberry1, x+15, y+15, 64, 64);
+        image(blueberry1, x+15, y-15, 64, 64);
+    }
+    else if (age < 120) {
+        image(blueberry2, x-15, y-15, 64, 64);
+        image(blueberry2, x-15, y+15, 64, 64);
+        image(blueberry2, x+15, y+15, 64, 64);
+        image(blueberry2, x+15, y-15, 64, 64);
+    }
+    else if (age < 180) {
+        image(blueberry3, x-15, y-15, 64, 64);
+        image(blueberry3, x-15, y+15, 64, 64);
+        image(blueberry3, x+15, y+15, 64, 64);
+        image(blueberry3, x+15, y-15, 64, 64);
+    }
+    else if (age < 240) {
+        image(blueberry4, x-15, y-15, 64, 64);
+        image(blueberry4, x-15, y+15, 64, 64);
+        image(blueberry4, x+15, y+15, 64, 64);
+        image(blueberry4, x+15, y-15, 64, 64);
+    }
+    else if (age < 300) {
+        image(blueberry5, x-15, y-15, 64, 64);
+        image(blueberry5, x-15, y+15, 64, 64);
+        image(blueberry5, x+15, y+15, 64, 64);
+        image(blueberry5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(blueberry6, x-15, y-15, 64, 64);
+        image(blueberry6, x-15, y+15, 64, 64);
+        image(blueberry6, x+15, y+15, 64, 64);
+        image(blueberry6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws chili pepper based on its age
+void drawChiliPepper(int x, int y, int age) {
+    if (age < 10) {
+        image(chilipepper1, x-15, y-15, 64, 64);
+        image(chilipepper1, x-15, y+15, 64, 64);
+        image(chilipepper1, x+15, y+15, 64, 64);
+        image(chilipepper1, x+15, y-15, 64, 64);
+    }
+    else if (age < 20) {
+        image(chilipepper2, x-15, y-15, 64, 64);
+        image(chilipepper2, x-15, y+15, 64, 64);
+        image(chilipepper2, x+15, y+15, 64, 64);
+        image(chilipepper2, x+15, y-15, 64, 64);
+    }
+    else if (age < 30) {
+        image(chilipepper3, x-15, y-15, 64, 64);
+        image(chilipepper3, x-15, y+15, 64, 64);
+        image(chilipepper3, x+15, y+15, 64, 64);
+        image(chilipepper3, x+15, y-15, 64, 64);
+    }
+    else if (age < 40) {
+        image(chilipepper4, x-15, y-15, 64, 64);
+        image(chilipepper4, x-15, y+15, 64, 64);
+        image(chilipepper4, x+15, y+15, 64, 64);
+        image(chilipepper4, x+15, y-15, 64, 64);
+    }
+    else if (age < 50) {
+        image(chilipepper5, x-15, y-15, 64, 64);
+        image(chilipepper5, x-15, y+15, 64, 64);
+        image(chilipepper5, x+15, y+15, 64, 64);
+        image(chilipepper5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(chilipepper6, x-15, y-15, 64, 64);
+        image(chilipepper6, x-15, y+15, 64, 64);
+        image(chilipepper6, x+15, y+15, 64, 64);
+        image(chilipepper6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws strawberry based on its age
+void drawStrawberry(int x, int y, int age) {
+    if (age < 80) {
+        image(strawberry1, x-15, y-15, 64, 64);
+        image(strawberry1, x-15, y+15, 64, 64);
+        image(strawberry1, x+15, y+15, 64, 64);
+        image(strawberry1, x+15, y-15, 64, 64);
+    }
+    else if (age < 160) {
+        image(strawberry2, x-15, y-15, 64, 64);
+        image(strawberry2, x-15, y+15, 64, 64);
+        image(strawberry2, x+15, y+15, 64, 64);
+        image(strawberry2, x+15, y-15, 64, 64);
+    }
+    else if (age < 240) {
+        image(strawberry3, x-15, y-15, 64, 64);
+        image(strawberry3, x-15, y+15, 64, 64);
+        image(strawberry3, x+15, y+15, 64, 64);
+        image(strawberry3, x+15, y-15, 64, 64);
+    }
+    else if (age < 320) {
+        image(strawberry4, x-15, y-15, 64, 64);
+        image(strawberry4, x-15, y+15, 64, 64);
+        image(strawberry4, x+15, y+15, 64, 64);
+        image(strawberry4, x+15, y-15, 64, 64);
+    }
+    else if (age < 400) {
+        image(strawberry5, x-15, y-15, 64, 64);
+        image(strawberry5, x-15, y+15, 64, 64);
+        image(strawberry5, x+15, y+15, 64, 64);
+        image(strawberry5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(strawberry6, x-15, y-15, 64, 64);
+        image(strawberry6, x-15, y+15, 64, 64);
+        image(strawberry6, x+15, y+15, 64, 64);
+        image(strawberry6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws bell pepper based on its age
+void drawBellPepper(int x, int y, int age) {
+    if (age < 100) {
+        image(bellpepper1, x-15, y-15, 64, 64);
+        image(bellpepper1, x-15, y+15, 64, 64);
+        image(bellpepper1, x+15, y+15, 64, 64);
+        image(bellpepper1, x+15, y-15, 64, 64);
+    }
+    else if (age < 200) {
+        image(bellpepper2, x-15, y-15, 64, 64);
+        image(bellpepper2, x-15, y+15, 64, 64);
+        image(bellpepper2, x+15, y+15, 64, 64);
+        image(bellpepper2, x+15, y-15, 64, 64);
+    }
+    else if (age < 300) {
+        image(bellpepper3, x-15, y-15, 64, 64);
+        image(bellpepper3, x-15, y+15, 64, 64);
+        image(bellpepper3, x+15, y+15, 64, 64);
+        image(bellpepper3, x+15, y-15, 64, 64);
+    }
+    else if (age < 400) {
+        image(bellpepper4, x-15, y-15, 64, 64);
+        image(bellpepper4, x-15, y+15, 64, 64);
+        image(bellpepper4, x+15, y+15, 64, 64);
+        image(bellpepper4, x+15, y-15, 64, 64);
+    }
+    else if (age < 500) {
+        image(bellpepper5, x-15, y-15, 64, 64);
+        image(bellpepper5, x-15, y+15, 64, 64);
+        image(bellpepper5, x+15, y+15, 64, 64);
+        image(bellpepper5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(bellpepper6, x-15, y-15, 64, 64);
+        image(bellpepper6, x-15, y+15, 64, 64);
+        image(bellpepper6, x+15, y+15, 64, 64);
+        image(bellpepper6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws sugar cane based on its age
+void drawSugarCane(int x, int y, int age) {
+    if (age < 120) {
+        image(sugarcane1, x-15, y-15, 64, 64);
+        image(sugarcane1, x-15, y+15, 64, 64);
+        image(sugarcane1, x+15, y+15, 64, 64);
+        image(sugarcane1, x+15, y-15, 64, 64);
+    }
+    else if (age < 240) {
+        image(sugarcane2, x-15, y-15, 64, 64);
+        image(sugarcane2, x-15, y+15, 64, 64);
+        image(sugarcane2, x+15, y+15, 64, 64);
+        image(sugarcane2, x+15, y-15, 64, 64);
+    }
+    else if (age < 360) {
+        image(sugarcane3, x-15, y-15, 64, 64);
+        image(sugarcane3, x-15, y+15, 64, 64);
+        image(sugarcane3, x+15, y+15, 64, 64);
+        image(sugarcane3, x+15, y-15, 64, 64);
+    }
+    else if (age < 480) {
+        image(sugarcane4, x-15, y-15, 64, 64);
+        image(sugarcane4, x-15, y+15, 64, 64);
+        image(sugarcane4, x+15, y+15, 64, 64);
+        image(sugarcane4, x+15, y-15, 64, 64);
+    }
+    else if (age < 600) {
+        image(sugarcane5, x-15, y-15, 64, 64);
+        image(sugarcane5, x-15, y+15, 64, 64);
+        image(sugarcane5, x+15, y+15, 64, 64);
+        image(sugarcane5, x+15, y-15, 64, 64);
+    }
+    else {
+        image(sugarcane6, x-15, y-15, 64, 64);
+        image(sugarcane6, x-15, y+15, 64, 64);
+        image(sugarcane6, x+15, y+15, 64, 64);
+        image(sugarcane6, x+15, y-15, 64, 64);
+    }
+}
+
+// Draws apple tree based on its age
+void drawAppleTree(int x, int y, int age) {
+    if (age < 200) {
+        image(appletree1, x+5, y, 80, 80);
+    }
+    else if (age < 400) {
+        image(appletree2, x+5, y, 80, 80);
+    }
+    else if (age < 600) {
+        image(appletree3, x+5, y, 80, 80);
+    }
+    else if (age < 800) {
+        image(appletree4, x+5, y, 80, 80);
+    }
+    else if (age < 1000) {
+        image(appletree5, x+5, y, 80, 80);
+    }
+    else {
+        image(appletree6, x+5, y, 80, 80);
+    }
+}
