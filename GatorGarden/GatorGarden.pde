@@ -61,6 +61,7 @@ PImage sugarcane1, sugarcane2, sugarcane3, sugarcane4, sugarcane5, sugarcane6, s
 PImage appletree1, appletree2, appletree3, appletree4, appletree5, appletree6, appletreeIcon;
 PImage backButton, menuButton;
 PImage gatorGardenStartScreen;
+PImage level1, level2, level3, level4, level5, level6, level7, level8, level9;
 
 // SoundFile initializations
 SoundFile backgroundMusic;
@@ -156,6 +157,16 @@ void setup() {
     menuButton = loadImage("ImageFiles/Menu Button.png");
     gatorGardenStartScreen = loadImage("ImageFiles/GatorGardenStartScreen.png");
 
+    level1 = loadImage("ImageFiles/Level1.png");
+    level2 = loadImage("ImageFiles/Level2.png");
+    level3 = loadImage("ImageFiles/Level3.png");
+    level4 = loadImage("ImageFiles/Level4.png");
+    level5 = loadImage("ImageFiles/Level5.png");
+    level6 = loadImage("ImageFiles/Level6.png");
+    level7 = loadImage("ImageFiles/Level7.png");
+    level8 = loadImage("ImageFiles/Level8.png");
+    level9 = loadImage("ImageFiles/Level9.png");
+
     // Sound loading
     backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
     buttonClick = new SoundFile(this, "AudioFiles/Button Click.mp3");
@@ -177,7 +188,7 @@ void draw() {
         image(gatorGardenStartScreen, 400, 150, 432, 192);
         textSize(84);
         textAlign(CENTER);
-        fill(255);
+        fill(235, 235, 200);
         rect(400, 325, 390, 90, 50);
         rect(400, 450, 390, 90, 50);
         rect(400, 575, 390, 90, 50);
@@ -194,44 +205,23 @@ void draw() {
         textSize(72);
         textAlign(CENTER);
         text("Level Select", 400, 175);
-        fill(255);
-        rect(255, 300, 100, 100, 25);
+        image(level1, 255, 300, 100, 100);
         translate(150, 0);
-        rect(255, 300, 100, 100, 25);
+        image(level2, 255, 300, 100, 100);
         translate(150, 0);
-        rect(255, 300, 100, 100, 25);
+        image(level3, 255, 300, 100, 100);
         resetMatrix();
-        rect(255, 450, 100, 100, 25);
+        image(level4, 255, 450, 100, 100);
         translate(150, 0);
-        rect(255, 450, 100, 100, 25);
+        image(level5, 255, 450, 100, 100);
         translate(150, 0);
-        rect(255, 450, 100, 100, 25);
+        image(level6, 255, 450, 100, 100);
         resetMatrix();
-        rect(255, 600, 100, 100, 25);
+        image(level7, 255, 600, 100, 100);
         translate(150, 0);
-        rect(255, 600, 100, 100, 25);
+        image(level8, 255, 600, 100, 100);
         translate(150, 0);
-        rect(255, 600, 100, 100, 25);
-        resetMatrix();
-        fill(0);
-        textSize(48);
-        text("1", 255, 315);
-        translate(150, 0);
-        text("2", 255, 315);
-        translate(150, 0);
-        text("3", 255, 315);
-        resetMatrix();
-        text("4", 255, 465);
-        translate(150, 0);
-        text("5", 255, 465);
-        translate(150, 0);
-        text("6", 255, 465);
-        resetMatrix();
-        text("7", 255, 615);
-        translate(150, 0);
-        text("8", 255, 615);
-        translate(150, 0);
-        text("9", 255, 615);
+        image(level9, 255, 600, 100, 100);
         resetMatrix();
 
         // Back Button
@@ -349,55 +339,28 @@ void draw() {
         endMenu();
 
         // Button Hover
-        if (gameState == 3) {
-            if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
-                strokeWeight(2);
-                fill(#b5e0f5);
-                rect(480, 35, 40, 20, 0, 20, 20, 0);
-                fill(0);
-                textSize(15);
-                text("+", 475, 40);
-                strokeWeight(1.5);
-            }
-            else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
-                strokeWeight(2);
-                fill(#f5b87a);
-                rect(480, 65, 40, 20, 0, 20, 20, 0);
-                fill(0);
-                textSize(15);
-                text("+", 475, 70);
-                strokeWeight(1.5);
-            }
-            else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
-                fill(#d3d3d3, 80);
-                rect(50, 50, 50, 50);
-            }
+        if (mouseX <= 500 && mouseX >= 460 && mouseY >= 25 && mouseY <= 45) {
+            strokeWeight(2);
+            fill(#b5e0f5);
+            rect(480, 35, 40, 20, 0, 20, 20, 0);
+            fill(0);
+            textSize(15);
+            text("+", 475, 40);
+            strokeWeight(1.5);
         }
-        
-        // if (menuOpen) {
-        //     //crops:
-        //     //wheat
-        //     if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
-        //         fill(235, 235, 200);
-        //         rect(width/2, height/2 - 100, 260, 60, 5);
-        //         fill(0);
-        //         textAlign(LEFT);
-        //         textSize(18);
-        //         text("Wheat", width/2 - 120, height/2 - 95);
-        //         text("Cost: $100", width/2 - 120, height/2 - 75);
-        //         image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
-        //         textAlign(BASELINE);
-        //     }
-        //     //close button
-        //     else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
-        //         fill(255, 200, 200);
-        //         rect(width/2, height/2 + 140, 120, 40, 10);
-        //         fill(0);
-        //         textAlign(CENTER);
-        //         text("Close", width/2, height/2 + 145);
-        //         textAlign(BASELINE);
-        //     }
-        // }
+        else if (mouseX <= 500 && mouseX >= 460 && mouseY >= 55 && mouseY <= 75) {
+            strokeWeight(2);
+            fill(#f5b87a);
+            rect(480, 65, 40, 20, 0, 20, 20, 0);
+            fill(0);
+            textSize(15);
+            text("+", 475, 70);
+            strokeWeight(1.5);
+        }
+        else if (mouseX >= 25 && mouseX <= 75 && mouseY >= 25 && mouseY <= 75) {
+            fill(#d3d3d3, 80);
+            rect(50, 50, 50, 50);
+        }
 
         if (gameMenuOpen) {
             textAlign(CENTER);
