@@ -60,6 +60,7 @@ PImage bellpepper1, bellpepper2, bellpepper3, bellpepper4, bellpepper5, bellpepp
 PImage sugarcane1, sugarcane2, sugarcane3, sugarcane4, sugarcane5, sugarcane6, sugarcaneIcon;
 PImage appletree1, appletree2, appletree3, appletree4, appletree5, appletree6, appletreeIcon;
 PImage backButton, menuButton;
+PImage gatorGardenStartScreen;
 
 // SoundFile initializations
 SoundFile backgroundMusic;
@@ -153,6 +154,7 @@ void setup() {
 
     backButton = loadImage("ImageFiles/Back Button.png");
     menuButton = loadImage("ImageFiles/Menu Button.png");
+    gatorGardenStartScreen = loadImage("ImageFiles/GatorGardenStartScreen.png");
 
     // Sound loading
     backgroundMusic = new SoundFile(this, "AudioFiles/Chill Farm Music.mp3");
@@ -172,10 +174,9 @@ void draw() {
     background(161, 126, 93);
     // Start Menu
     if (gameState == 1) {
-        fill(0);
+        image(gatorGardenStartScreen, 400, 150, 432, 192);
         textSize(84);
         textAlign(CENTER);
-        text("GatorGarden", 400, 200);
         fill(255);
         rect(400, 325, 390, 90, 50);
         rect(400, 450, 390, 90, 50);
