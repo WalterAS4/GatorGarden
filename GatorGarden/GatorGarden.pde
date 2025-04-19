@@ -64,88 +64,6 @@ SoundFile earningCoins, planting, scaring, stealing, walking;
 
 int lastStep = 0;
 
-void menu() {
-  if (!menuOpen) return;
-  
-  //menu
-  fill(200, 200, 200, 230);
-  stroke(0);
-  rectMode(CENTER);
-  int menuWidth = 300;
-  int menuHeight = 400;
-  rect(width/2, height/2, menuWidth, menuHeight, 10);
-  fill(0);
-  textSize(24);
-  textAlign(CENTER);
-  text("Plant Shop", width/2, height/2 - 160);
-  
-  //crops:
-  //wheat
-  fill(232, 232, 165);
-  rect(width/2, height/2 - 100, menuWidth - 40, 60, 5);
-  fill(0);
-  textAlign(LEFT);
-  textSize(18);
-  text("Wheat", width/2 - 120, height/2 - 95);
-  text("Cost: $100", width/2 - 120, height/2 - 75);
-  image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
-  
-  //more crops:
-  
-  //close button
-  fill(250, 175, 175);
-  rect(width/2, height/2 + 140, 120, 40, 10);
-  fill(0);
-  textAlign(CENTER);
-  text("Close", width/2, height/2 + 145);
-
-  textAlign(BASELINE);
-}
-
-// Game Menu
-void gameMenu() {
-    if (!gameMenuOpen) return;
-
-    fill(200, 200, 200, 230);
-    stroke(0);
-    rectMode(CENTER);
-    int menuWidth = 400;
-    int menuHeight = 500;
-    rect(width/2, height/2, menuWidth, menuHeight, 10);
-    fill(0);
-    textSize(24);
-    textAlign(CENTER);
-    text("Paused", width/2, height/2 - 200);
-    
-    // Buttons
-    fill(232, 232, 165);
-    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
-    translate(0, 75);
-    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
-    translate(0, 75);
-    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
-    translate(0, 75);
-    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
-    translate(0, 75);
-    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
-    resetMatrix();
-
-    textSize(20);
-    fill(0);
-    text("Resume", width/2, height/2 - 140);
-    translate(0, 75);
-    text("Restart", width/2, height/2 - 140);
-    translate(0, 75);
-    text("Main Menu", width/2, height/2 - 140);
-    translate(0, 75);
-    text("Level Select", width/2, height/2 - 140);
-    translate(0, 75);
-    text("Quit Game", width/2, height/2 - 140);
-    resetMatrix();
-
-    textAlign(BASELINE);
-}
-
 void setup() {
     size(800,800);
     width = 800;
@@ -437,28 +355,31 @@ void draw() {
             fill(#d3d3d3, 80);
             rect(50, 50, 50, 50);
         }
-        if (menuOpen) {
-            //crops:
-            //wheat
-            if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
-                fill(235, 235, 200);
-                rect(width/2, height/2 - 100, 260, 60, 5);
-                fill(0);
-                textAlign(LEFT);
-                textSize(18);
-                text("Wheat", width/2 - 120, height/2 - 95);
-                text("Cost: $100", width/2 - 120, height/2 - 75);
-                image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
-                textAlign(BASELINE);
-            }
-            //close button
-            else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
-                fill(255, 200, 200);
-                rect(width/2, height/2 + 140, 120, 40, 10);
-                fill(0);
-                textAlign(CENTER);
-                text("Close", width/2, height/2 + 145);
-                textAlign(BASELINE);
+        // if (menuOpen) {
+        //     //crops:
+        //     //wheat
+        //     if (mouseX > width/2 - 150 && mouseX < width/2 + 150 && mouseY > height/2 - 130 && mouseY < height/2 - 70) {
+        //         fill(235, 235, 200);
+        //         rect(width/2, height/2 - 100, 260, 60, 5);
+        //         fill(0);
+        //         textAlign(LEFT);
+        //         textSize(18);
+        //         text("Wheat", width/2 - 120, height/2 - 95);
+        //         text("Cost: $100", width/2 - 120, height/2 - 75);
+        //         image(wheat6, width/2 + 100, height/2 - 90, 48, 48);
+        //         textAlign(BASELINE);
+        //     }
+        //     //close button
+        //     else if (mouseX > width/2 - 60 && mouseX < width/2 + 60 && mouseY > height/2 + 120 && mouseY < height/2 + 160) {
+        //         fill(255, 200, 200);
+        //         rect(width/2, height/2 + 140, 120, 40, 10);
+        //         fill(0);
+        //         textAlign(CENTER);
+        //         text("Close", width/2, height/2 + 145);
+        //         textAlign(BASELINE);
+        //     }
+        // }
+
         if (gameMenuOpen) {
             textAlign(CENTER);
             textSize(20);
@@ -621,10 +542,55 @@ void menu() {
   textAlign(BASELINE);
 }
 
+// Game Menu
+void gameMenu() {
+    if (!gameMenuOpen) return;
+
+    fill(200, 200, 200, 230);
+    stroke(0);
+    rectMode(CENTER);
+    int menuWidth = 400;
+    int menuHeight = 500;
+    rect(width/2, height/2, menuWidth, menuHeight, 10);
+    fill(0);
+    textSize(24);
+    textAlign(CENTER);
+    text("Paused", width/2, height/2 - 200);
+    
+    // Buttons
+    fill(232, 232, 165);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    translate(0, 75);
+    rect(width/2, height/2 - 140, menuWidth - 60, 60, 5);
+    resetMatrix();
+
+    textSize(20);
+    fill(0);
+    text("Resume", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Restart", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Main Menu", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Level Select", width/2, height/2 - 140);
+    translate(0, 75);
+    text("Quit Game", width/2, height/2 - 140);
+    resetMatrix();
+
+    textAlign(BASELINE);
+}
+
 void mousePressed() {
     if (gameState == 1) {
         if (mouseX >= 205 && mouseX <= 595 && mouseY >= 280 && mouseY <= 370) {
             gameState = 3;
+            gamePaused = false;
         }
         else if (mouseX >= 205 && mouseX <= 595 && mouseY >= 405 && mouseY <= 495) {
             gameState = 2;
@@ -714,6 +680,7 @@ void mousePressed() {
                     planting.play();
                 }
             }
+        }
 
         // For GameMenu
         // If menu open, handle clicks
@@ -724,12 +691,18 @@ void mousePressed() {
                 buttonClick.play();
             }
             else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 305 && mouseY <= 365) {
+                gameMenuOpen = false;
+                menuOpen = false;
                 //TODO: implement restarting current level
             }
             else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 380 && mouseY <= 440) {
+                gameMenuOpen = false;
+                menuOpen = false;
                 gameState = 1;
             }
             else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 455 && mouseY <= 515) {
+                gameMenuOpen = false;
+                menuOpen = false;
                 gameState = 2;
             }
             else if (mouseX >= 230 && mouseX <= 570 && mouseY >= 530 && mouseY <= 590) {
